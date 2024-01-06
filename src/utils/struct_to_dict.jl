@@ -1,0 +1,1 @@
+struct_to_dict(x) = Dict(fn=>getfield(x, fn) for fn ∈ fieldnames(typeof(x)))

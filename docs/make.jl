@@ -1,19 +1,11 @@
-using JuDyn
 using Documenter
-
-DocMeta.setdocmeta!(JuDyn, :DocTestSetup, :(using JuDyn); recursive=true)
-
-makedocs(;
-    modules=[JuDyn],
-    authors="Michel Geradin <mgeradin@gmail.com> and contributors",
-    repo="https://github.com/mgeradin/JuDyn.jl/blob/{commit}{path}#{line}",
-    sitename="JuDyn.jl",
-    format=Documenter.HTML(;
-        prettyurls=get(ENV, "CI", "false") == "true",
-        edit_link="main",
-        assets=String[],
-    ),
-    pages=[
-        "Home" => "index.md",
-    ],
-)
+# using DocumenterLaTeX
+# include("../src/JuDyn.jl")
+# using .JUDYN
+using JuDyn
+push!(LOAD_PATH,"./src/")
+push!(LOAD_PATH,"./src/MyAlgebra/src/")
+push!(LOAD_PATH,"./src/set_elements/src/")
+# push!(LOAD_PATH,"./src/solve/")
+# makedocs(format = DocumenterLaTeX.LaTeX(),sitename="JuDyn")
+makedocs(sitename="JuDyn")
