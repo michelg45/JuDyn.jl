@@ -1,0 +1,6 @@
+.jld
+/docs/Manifest.toml
+/docs/build/
+src/.h5
+test/.jld
+test/src/.h5

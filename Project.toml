@@ -1,0 +1,7 @@
+name = "JuDyn"
+uuid = "c3602030-d14b-4b28-8145-f97f9e8ec501"
+authors = ["Michel Geradin <mgeradin@gmail.com> and contributors"]
+version = "0.0.1"
+
+[compat]
+julia = "1.9"
