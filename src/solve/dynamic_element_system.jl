@@ -30,16 +30,6 @@ function dynamic_element_system(Nel::Int64, element_numbers::Vector{Int},
             kin_energy += kin_el
             str_energy += str_el
             pot_energy += pot_el
-        elseif el_type == "visco_beam_dyn"
-            kin_el, str_el, pot_el = visco_beam_dyn(nbr,y_n,Dy,ydot_np1,res,p,alpha_stiff,theta_p,matrix,itime,h,niter)
-            kin_energy += kin_el
-            str_energy += str_el
-            pot_energy += pot_el
-        elseif el_type == "visco_beam_QS"
-            kin_el, str_el, pot_el = visco_beam_static(nbr,y_n,Dy,ydot_np1,res,p,alpha_stiff,theta_p,matrix,itime,h,niter)
-            kin_energy += kin_el
-            str_energy += str_el
-            pot_energy += pot_el
         elseif el_type == "frame_link"
             frame_link(nbr,Dy,res,matrix)
         elseif el_type == "node_link"
@@ -55,16 +45,6 @@ function dynamic_element_system(Nel::Int64, element_numbers::Vector{Int},
             ext_work += ext_work_el
         elseif el_type == "shell"
             kin_el, str_el, pot_el = shell(nbr,y_n,Dy,ydot_np1,res,p,alpha_stiff,theta_p,matrix,itime,niter,h)
-            str_energy += str_el
-            pot_energy += pot_el
-            kin_energy += kin_el
-        elseif el_type == "visco_shell_dyn"
-            kin_el, str_el, pot_el = visco_shell_dyn(nbr,y_n,Dy,ydot_np1,res,p,alpha_stiff,theta_p,matrix,itime,niter,h)
-            str_energy += str_el
-            pot_energy += pot_el
-            kin_energy += kin_el
-        elseif el_type == "visco_shell_QS"
-            kin_el, str_el, pot_el = visco_shell_static(nbr,y_n,Dy,ydot_np1,res,p,alpha_stiff,theta_p,matrix,itime,niter,h)
             str_energy += str_el
             pot_energy += pot_el
             kin_energy += kin_el
@@ -86,6 +66,11 @@ function dynamic_element_system(Nel::Int64, element_numbers::Vector{Int},
             ext_work += ext_work_el
         elseif el_type == "lin_constr"
             linear_constraint(nbr,y_n,Dy,res,matrix)
+        elseif el_type == "super_beam"
+            (pot_el,kin_el, str_el) = super_beam(nbr,y_n,Dy,ydot_np1,res,p,alpha_stiff,theta_p,matrix,itime,h)
+            kin_energy += kin_el
+            str_energy += str_el
+            pot_energy += pot_el
 
 
 """        elseif el_type == "ground_spherical_joint"
@@ -95,11 +80,7 @@ function dynamic_element_system(Nel::Int64, element_numbers::Vector{Int},
 
         """
 
-        elseif el_type == "super_beam"
-            (pot_el,kin_el, str_el) = super_beam(nbr,y_n,Dy,ydot_np1,res,p,theta_p,itime,h)
-            kin_energy += kin_el
-            str_energy += str_el
-            pot_energy += pot_el
+
       
 
 

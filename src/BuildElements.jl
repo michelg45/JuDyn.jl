@@ -72,6 +72,8 @@ include("build_elements/point_along_direction.jl")
 include("set_elements/distance_to_point.jl")
 
 
+
+
 export rigid_body
 export rigid_body_force
 export rigid_mass
@@ -93,6 +95,7 @@ export beam_force
 export shell
 export shell_force
 export super_beam
+export super_beam_force
 export ground_spring_damper
 export ground_spring_damper_force
 export push_element_sparse

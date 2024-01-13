@@ -1,10 +1,8 @@
 """
     ModelArray
 
-        ModelArray is a data structure that contains the general data of the model. 
-        It is defined in the FORDYN module.
+        Module definning  the  data structure that contains the general data of the model. It is defined in the FORDYN module.
 """
-
 mutable struct ModelArray
 
     Name::String
@@ -52,10 +50,6 @@ mutable struct ModelArray
     matrix_update::Bool
     eigvals::Bool
     init_file::String
-
-
-
-
 
 
     function ModelArray(Name)

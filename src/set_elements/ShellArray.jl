@@ -7,7 +7,7 @@
         numbers::Vector{Int}                                    number of the element
         npoints::Vector{Int}                                    number of nodes of the element
         ngauss_points::Vector{Int}                              number of Gauss points
-        node_orders::Vector{Vector{Int}}                        order of the element nodes in th structural node set
+        node_orders::Vector{Vector{Int}}                        order of the element nodes in the structural node set
         stiffness_properties::Vector{Vector{Float64}}           element stiffness properties
         time_constants::Array{Vector{Float64},1}                viscoelastic time constants
         ratio_infty::Vector{Float64}                            fraction of elastic stress at infinity

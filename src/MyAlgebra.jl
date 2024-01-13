@@ -114,6 +114,8 @@ include(dir*"shape_functions_2D.jl")
 export shape_functions_1D, shape_functions_2D
 include(dir*"gauss_points.jl")
 export gauss_points
+include(dir*"levicivita.jl")
+export levicivita
 
 """include(dir*"alpha.jl")
 include(dir*"beta.jl")

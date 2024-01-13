@@ -20,6 +20,9 @@ include("Nodes.jl")
 include("Utils.jl")
 @reexport using .Utils
 
+include("LinearBeam.jl")
+@reexport using .LinearBeam
+
 include("SetElements.jl")
 @reexport using .SetElements
 
@@ -43,8 +46,5 @@ include("InputFunctions.jl")
 
 include("Solve.jl")
 @reexport using .Solve
-
-include("linear_2d.jl")
-export linear_2d
 
 end

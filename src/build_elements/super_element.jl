@@ -1,5 +1,7 @@
-# ===================================================================================
-function superelement_herting(nbr::Int,y::Vector,Dy::Vector,ydot::Vector,res::Vector,p::Vector,theta_p::Float64,
+"""
+    superelement
+"""
+function superelement(nbr::Int,y::Vector,Dy::Vector,ydot::Vector,res::Vector,p::Vector,theta_p::Float64,
     alpha_stiff::Float64,matrix::Bool)
 
     nc = Main.node_container
@@ -128,18 +130,22 @@ function superelement_herting(nbr::Int,y::Vector,Dy::Vector,ydot::Vector,res::Ve
     vdot_0 = Vec3(sdot[iv_0])
     Omega_0= Vec3(s[iomega_0]+Ds[iomega_0])
     Omegadot_0= Vec3(sdot[iomega_0])
+
+    Dx_0 = Vec3(Ds[ix_0])
     Dpsi_0 = RV3(Ds[itheta_0])
-    psidot_0 = Vec3(sdot[itheta_0])
-    psi_0 = RV3(cf[node_0].psi, Dpsi_0)
-    x_0 = cf[node_0].x + Vec3(Ds[ix_0])
+    x_0 = cf[nodes[3]].x + Dx_0
+    psi_0 = RV3(cf[nodes[3]].psi,Dpsi_0)
+    xdot_0 = Vec3(sdot[ix_0])
+    R_0 = rot(psi_0)
+    R_0T =  transpose(R_0)
     T_0 = tang(Dpsi_0)
+    psidot_0 = Vec3(sdot[itheta_0])
     W_0 = T_0*psidot_0
     DW_0 = Dtang(psidot_0,Dpsi_0)
-    xdot_0 = Vec3(sdot[ix_0])
-    R_0 =  rot(psi_0)
-    R_0T =  transpose(R_0)
+ 
+  
 
-    W0R0T = tilde(W_0)*rot(-psi_0)
+    W0R0T = tilde(W_0)*R_0T
 
     p_el[ix_0] = (mass*grav).v
 
@@ -323,15 +329,14 @@ end
 
 
 
-    if rotation == true
-        Om = W_0 + Omega_d
-        A_omega = Om.v'*A_rot
-        G = - (Om[1]*S_rot[1]+Om[2]*S_rot[2]+Om[3]*S_rot[3])
-        res_el[iv] -= A_omega*q
-        res_el[ix] -= G*v
-        S_el[ix,iv] += alpha_stiff*G
-        S_el[iv,iq] += alpha_stiff*A_omega
-    end
+    Om = W_0 + Omega_d
+    A_omega = Om.v'*A_rot
+    G = - (Om[1]*S_rot[1]+Om[2]*S_rot[2]+Om[3]*S_rot[3])
+    res_el[iv] -= A_omega*q
+    res_el[ix] -= G*v
+    S_el[ix,iv] += alpha_stiff*G
+    S_el[iv,iq] += alpha_stiff*A_omega
+    
     
     S_el[iv_B,ix_0B] = theta_p*DqDx + alpha_stiff*DqdotDx
     S_el[iv_I,ix_I] = theta_p*eye(N_I)
@@ -370,9 +375,6 @@ end
 
     kin_el = CM_kin_el + elast_kin_el
 
-
-   
-
     if matrix == false
         push_element_sparse(res,p,iel,inv_loc_q,inv_loc_v,S_el,res_el,p_el)
         return pot_el, kin_el, str_el
@@ -385,9 +387,10 @@ end
 
 end
 
-
-
-function superelement_herting_force(nbr::Int,y::Vector,Dy::Vector,ydot::Vector,res::Vector,p::Vector)
+"""
+    superelement_force
+"""
+function superelement_force(nbr::Int,y::Vector,Dy::Vector,ydot::Vector,res::Vector,p::Vector)
 
     mc =  Main.model_container
     cf =  Main.Frames.current_frames
@@ -502,15 +505,17 @@ function superelement_herting_force(nbr::Int,y::Vector,Dy::Vector,ydot::Vector,r
     vdot_0 = Vec3(sdot[iv_0])
     Omega_0= Vec3(s[iomega_0]+Ds[iomega_0])
     Omegadot_0= Vec3(sdot[iomega_0])
+    Dx_0 = Vec3(Ds[ix_0])
     Dpsi_0 = RV3(Ds[itheta_0])
-    psidot_0 = Vec3(sdot[itheta_0])
-    psi_0 = RV3(cf[node_0].psi, Dpsi_0)
-    x_0 = cf[node_0].x + Vec3(Ds[ix_0])
-    T_0 = tang(Dpsi_0)
-    W_0 = T_0*psidot_0
+    x_0 = cf[nodes[3]].x + Dx_0
+    psi_0 = RV3(cf[nodes[3]].psi,Dpsi_0)
     xdot_0 = Vec3(sdot[ix_0])
-    R_0 =  rot(psi_0)
+    R_0 = rot(psi_0)
     R_0T =  transpose(R_0)
+    T_0 = tang(Dpsi_0)
+    psidot_0 = Vec3(sdot[itheta_0])
+    W_0 = T_0*psidot_0
+
 
     p_el[ix_0] = (mass*grav).v
 
@@ -521,16 +526,12 @@ if rotation == true
     res_el[iv_0]= (v_0 - xdot_0 - crossp(Omega_d,x_0)).v 
     res_el[itheta_0] = -(J*Omegadot_0 + crossp(W_0+ROmega_d, J*Omega_0)).v
     res_el[iomega_0]= (Omega_0 - W_0 - ROmega_d).v
-#    A_0= (theta_p*I3 + alpha_stiff*tilde(ROmega_d))*T_0 + alpha_stiff*DW_0
-
     
 else 
     res_el[ix_0] =  (mass*(grav -vdot_0)).v
     res_el[itheta_0] = -(J*Omegadot_0 + crossp(W_0,J*Omega_0)).v
     res_el[iv_0]= (v_0 - xdot_0).v
     res_el[iomega_0]= (Omega_0 -W_0).v
-#    A_0= theta_p*T_0 + alpha_stiff*DW_0
-
 
 end
     CM_kin_el = 1.0/2.0*(dotp(mass*v_0,v_0)+dotp(Omega_0,J*Omega_0))
@@ -661,12 +662,7 @@ end
     qdot = [qdot_B; qdot_I]
     q = [q_B; q_I]
 
-
 # Contribution of boundary nodes in local coordinates
-
-
-    
-
 
     res_el[iv] = v - qdot
     Fel = K*q
@@ -674,20 +670,17 @@ end
     elast_kin_el = 1.0/2.0*transpose(v)*mv
     res_el[ix] = - (Fel + M*vdot)
 
-    if rotation == true
-        Om = W_0 + Omega_d
-        A_omega = Om.v'*A_rot
-        G = - (Om[1]*S_rot[1]+Om[2]*S_rot[2]+Om[3]*S_rot[3])
-        res_el[iv] -= A_omega*q
-        res_el[ix] -= G*v
-    end
-    
+    Om = W_0 + Omega_d
+    A_omega = Om.v'*A_rot
+    G = - (Om[1]*S_rot[1]+Om[2]*S_rot[2]+Om[3]*S_rot[3])
+    res_el[iv] -= A_omega*q
+    res_el[ix] -= G*v
+
     str_el = 1.0/2.0*transpose(q)*Fel
 
 #
 #   Contribution of elatic modes to RB motion
 #
-
 
 if rotation == true
     s_qv = Vec3([q'*S_rot[i]*v  for i in 1:3]) 
@@ -710,13 +703,10 @@ end
 
     kin_el = CM_kin_el + elast_kin_el
 
-
-
     for i = 1:ndim
         iloc = inv_loc[i] 
         iloc > 0  &&  (res[iloc] += res_el[i]; p[iloc] += p_el[i])
     end
-   
 
     return pot_el, kin_el, str_el
 

@@ -13,7 +13,6 @@ link to [MyAlgebra](@ref)
 ## Modules
 
 ```@docs
-FORDYN
 MyAlgebra
 Nodes
 SetElements
@@ -22,6 +21,7 @@ SetElements
 ## FORDYN
 
 ```@docs
+FORDYN
 ModelArray
 NodeArray
 ElementArray
@@ -55,6 +55,7 @@ Adj
 shape_functions_1D
 shape_functions_2D
 gauss_points
+levicivita
 ```
 
 - link to [`tilde`](@ref)
@@ -119,6 +120,22 @@ read_beam_properties
 read_shell_properties
 ```
 
+### Linear beam
+
+```@docs
+linear_beam_element
+linear_beam_element_pure_bending
+super_beam_matrix_kernel
+beam_mass_2D
+beam_stiffness_2D
+beam_mass_3D_local
+beam_stiffness_3D_local
+beam_mass_pure_bending_3D_local
+beam_stiffness_pure_bending_3D_local
+beam_gyr_3D_local
+super_beam_matrix_kernel
+```
+
 ## Model assembly
 
 ```@docs
@@ -161,17 +178,10 @@ hinge
 hinge_force
 beam
 beam_force
-visco_beam_dyn
-visco_beam_dyn_force
-visco_beam_static
-visco_beam_static_force
 shell
 shell_force
-visco_shell_dyn
-visco_shell_dyn_force
-visco_shell_static
-visco_shell_static_force
 super_beam
+super_beam_force
 ground_spring_damper
 ground_spring_damper_force
 push_element_sparse
@@ -190,6 +200,7 @@ CurrentFrame
 init_frames
 increment_frames
 ```
+
 
 
 

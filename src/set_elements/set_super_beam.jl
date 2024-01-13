@@ -1,18 +1,35 @@
 """
     set_super_beam
 
-    Function defining the topology of a straight beam between nodes nodes[1] and nodes[2]
-    The node of reference ref_node corresponds the floating center of mass.
-    The first reference axis at ref_node must be aligned with the beam refference line.
-    The other two reference axes define the cross-section orientation.
+        Function defining the topology of a straight beam between nodes nodes[1] and nodes[2]
+        The node of reference 'ref_node' corresponds the floating center of mass.
+        The first reference axis at ref_node must be aligned with the beam reference line.
+        The other two reference axes define the cross-section orientation.
 
-It constructs the array super_beam_container[iel]  containing
+        It constructs the array super_beam_container[iel]  containing
 
-    - the geometric and topological data
-    - the linear matrices M_rig, K_elast and M_elast describing the linear behavior of the element  in the local frame.
+        * the geometric and topological data
+        * the elements  describing the linear behavior of the element  in the local frame: 
+            mass::Float64               total mass of the element.
+            Jrot::Array{Float64}        inertia tensor of the element.
+            K_elast::Array{Float64}     reduced linear stiffness matrix.
+            M_elast::Array{Float64}     reduced linear mass matrix associated to elastic modes.
+            S::Array{Float64}           matrix allowing to compute the deformation-dependent contribution to elastic forces.    
+
+        To get more infomation on the contruction method, see function 'super_beam_matrix_kernel.jl'.
+
+        input: 
+            nbr::Int                                element number
+            ref_node::Int                           reference node at mid-length
+            nodes::Vector{Int}                      end nodes of the beam element
+            stiffness_properties::Vector{Float64}   stiffness properties of the element mass_properties::Vector{Float64}        mass properties of the element
+            nl_correction::Bool                     nonlinear correction parameter (geometric  stiffness correction) : 'true' if omitted.
+
+        Calling sequences: 
+            set_super_beam(nbr,ref_node,nodes,stiffness_properties,mass_properties,nl_correction)
+            set_super_beam(nbr,ref_node,nodes,stiffness_properties,mass_properties)
 
 """
-
 function set_super_beam(nbr::Int,ref_node::Int,nodes::Vector{Int}, stiffness_properties::Vector{Float64},mass_properties::Vector{Float64},nl_correction::Bool)
 
 
@@ -63,13 +80,8 @@ function set_super_beam(nbr::Int,ref_node::Int,nodes::Vector{Int}, stiffness_pro
     push!(sbc.boundary_node_orders,[n1,n2])
     append!(sbc.length,length)
     push!(sbc.local_node_orientations,psi_rel)
-    mass, Jrot,  K_elast, M_elast, S = super_beam_matrix_kernel(length, stiffness_properties, mass_properties,"new")
-    # mass, Jrot,  K_elast, M_elast = super_beam_matrix_kernel(length, stiffness_properties, mass_properties)
-"""    K_elast = R'*K_elast*R
-    M_elast = R'*M_elast*R
-    for i = 1:3
-        S[i] = R'*S[i]*R
-    end"""
+    mass, Jrot,  K_elast, M_elast, S = super_beam_matrix_kernel(length, stiffness_properties, mass_properties)
+
     append!(sbc.mass,mass)
     push!(sbc.Jrot, Jrot)
     push!(sbc.K_elast, K_elast)

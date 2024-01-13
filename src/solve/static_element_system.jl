@@ -39,14 +39,6 @@ function static_element_system(Nel::Int64, element_numbers::Vector{Int},element_
             kin_el, str_el, pot_el = shell(nbr,y_n,Dy,ydot_np1,res,p,alpha_stiff,theta_p,matrix,itime,niter,h)
             str_energy += str_el
             pot_energy += pot_el
-"""        elseif el_type == "visco_shell_dyn"
-            kin_el, str_el, pot_el = visco_shell_dyn(nbr,y_n,Dy,ydot_np1,res,p,alpha_stiff,theta_p,matrix,itime,niter,h)
-            str_energy += str_el
-            pot_energy += pot_el
-        elseif el_type == "visco_shell_QS"
-            kin_el, str_el, pot_el = visco_shell_static(nbr,y_n,Dy,ydot_np1,res,p,alpha_stiff,theta_p,matrix,itime,niter,h)
-            str_energy += str_el
-            pot_energy += pot_el"""
         elseif el_type == "ground_spring_damper"
             str_el, ext_work_el = ground_spring_damper(nbr,Dy,ydot_np1,ydot_n,res,alpha_stiff,theta_p,matrix)
             ext_work += ext_work_el
@@ -70,7 +62,11 @@ function static_element_system(Nel::Int64, element_numbers::Vector{Int},element_
             ext_work_el = node_displacement(nbr,Dy,y_n,res,itime,h)
             ext_work += ext_work_el 
         elseif el_type == "lin_constr"
-            linear_constraint(nbr,y_n,Dy,res,matrix)   
+            linear_constraint(nbr,y_n,Dy,res,matrix)
+        elseif el_type == "super_beam"
+            (pot_el,kin_el, str_el) = super_beam(nbr,y_n,Dy,ydot_np1,res,p,theta_p,itime,h)
+            str_energy += str_el
+            pot_energy += pot_el   
 """        elseif el_type == "ground_spherical_joint"
             ground_spherical_joint(nbr,Dy,res,alpha_stiff,matrix)
         elseif el_type == "spherical_joint"
@@ -78,11 +74,7 @@ function static_element_system(Nel::Int64, element_numbers::Vector{Int},element_
 
         """
 
-        elseif el_type == "super_beam"
-            (pot_el,kin_el, str_el) = super_beam(nbr,y_n,Dy,ydot_np1,res,p,theta_p,itime,h)
-            kin_energy += kin_el
-            str_energy += str_el
-            pot_energy += pot_el
+
 
 
         elseif el_type == "frame_spring"

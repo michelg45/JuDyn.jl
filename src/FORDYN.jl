@@ -1,15 +1,15 @@
 
 __precompile__()
 
+"""
+FORDYN
+
+    Preprocessor module that builds the 'Main.model_container', 'Main.node_container' and 'Main.element_container' data structures containing the general data of the model.
+
+"""
 module FORDYN
 using JLD
 using ..MyAlgebra
-
-"""
-
-    FORDYN is a preprocessor module that builds  JuDyn.FORDYN.model_container, JuDyn.FORDYN.node_container and JuDyn.FORDYN.element_container, data structures containing the general data of the model.
-
-"""
 
 dir = "fordyn/"
 

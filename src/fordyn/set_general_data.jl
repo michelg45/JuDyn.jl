@@ -25,7 +25,7 @@ function set_general_data(Name::String,gravity::Vec3,uniform_rotation::Bool,rota
 end
 
 function set_general_data(Name::String,gravity::Vec3)
-    mc = JuDyn.FORDYN.model_container
+    mc = Main.model_container
     mc.Name = Name
     mc.gravity = gravity
     mc.uniform_rotation = false

@@ -21,14 +21,6 @@ function static_element_forces(Nel::Int64, element_numbers::Vector{Int},element_
             kin_el, str_el, pot_el = beam_force(nbr,y_n,Dy,ydot_np1,res,p,itime,h,niter)
             str_energy += str_el
             pot_energy += pot_el
-        elseif el_type == "visco_beam_dyn"
-            kin_el, str_el, pot_el = visco_beam_dyn_force(nbr,y_n,Dy,ydot_np1,res,p,itime,h)
-            str_energy += str_el
-            pot_energy += pot_el
-        elseif el_type == "visco_beam_QS"
-            kin_el, str_el, pot_el = visco_beam_static_force(nbr,y_n,Dy,ydot_np1,res,p,itime,h)
-            str_energy += str_el
-            pot_energy += pot_el
         elseif el_type == "frame_link"
             frame_link_force(nbr,Dy,res)
         elseif el_type == "node_link"
@@ -38,14 +30,6 @@ function static_element_forces(Nel::Int64, element_numbers::Vector{Int},element_
             global ext_work += ext_work_el
         elseif el_type == "shell"
             kin_el, str_el, pot_el = shell_force(nbr,y_n,Dy,ydot_np1,res,p,itime,niter,h)
-            str_energy += str_el
-            pot_energy += pot_el
-        elseif el_type == "visco_shell_dyn"
-            kin_el, str_el, pot_el = visco_shell_dyn_force(nbr,y_n,Dy,ydot_np1,res,p,itime,h)
-            str_energy += str_el
-            pot_energy += pot_el
-        elseif el_type == "visco_shell_QS"
-            kin_el, str_el, pot_el = visco_shell_static_force(nbr,y_n,Dy,ydot_np1,res,p,itime,h)
             str_energy += str_el
             pot_energy += pot_el
         elseif el_type == "ground_spring_damper"
@@ -64,6 +48,10 @@ function static_element_forces(Nel::Int64, element_numbers::Vector{Int},element_
             ext_work += ext_work_el
         elseif el_type == "lin_constr"
             linear_constraint_force(nbr,y_n,Dy,res)
+        elseif el_type == "super_beam"
+            (pot_el,kin_el, str_el) = super_beam(nbr,y_n,Dy,ydot_np1,res,p,theta_p,itime,h)
+            str_energy += str_el
+            pot_energy += pot_el
 
     """        elseif el_type == "ground_spherical_joint"   
             ground_spherical_joint_force(nbr,Dy,res)
@@ -71,11 +59,7 @@ function static_element_forces(Nel::Int64, element_numbers::Vector{Int},element_
             spherical_joint_force(nbr,Dy,res,)"""
         """
 
-        elseif el_type == "super_beam"
-            (pot_el,kin_el, str_el) = super_beam(nbr,y_n,Dy,ydot_np1,res,p,theta_p,itime,h)
-            kin_energy += kin_el
-            str_energy += str_el
-            pot_energy += pot_el
+
 
 
         elseif el_type == "frame_spring"

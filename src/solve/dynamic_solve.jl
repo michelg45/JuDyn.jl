@@ -180,6 +180,8 @@ function dynamic_solve(JSON_file)
 
     global ext_work = 0.0
 
+    # global inc_ext_work = 0.0
+
     global itime_vals_saved = 0
 
     global itime_saved = 0
@@ -335,6 +337,8 @@ function dynamic_solve(JSON_file)
             # correct_frames(dy,theta_p,Nnodes)
 
         end
+
+        # inc_ext_work += ext_work
         
         if energy_balance == true
         
@@ -381,6 +385,7 @@ function dynamic_solve(JSON_file)
             itime_saved, itime_vals_saved = record_on_h5_file_dynamic(dsets,itime,itime_saved,itime_vals_saved,times,niter,y_n,ydot_np1,p,
             pot_energy,kin_energy,str_energy,ext_work,Npas,save,save_freq,eigvals,eig_freq, vals)
 
+            # inc_ext_work = 0.0
 
         end
 

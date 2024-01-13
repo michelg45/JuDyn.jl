@@ -15,8 +15,12 @@ module SetElements
 
 using LinearAlgebra
 using ..MyAlgebra
-# using ..LinearBeam
+using ..Utils
+using ..LinearBeam
 using JSON
+
+
+
 
 dir = "set_elements/"
 
@@ -29,13 +33,13 @@ include(dir*"RigidMassArray.jl")
 include(dir*"set_beam.jl")
 include(dir*"BeamArray.jl")
 
+include(dir*"set_super_beam.jl")
+include(dir*"SuperBeamArray.jl")
+
 include(dir*"set_shell.jl")
 include(dir*"ShellArray.jl")
 include(dir*"shell_mass_kernel.jl")
 include(dir*"shell_stiffness_matrix.jl")
-
-# include(dir*"set_super_beam.jl")
-# include(dir*"SuperBeamArray.jl")
 
 include(dir*"set_node_force.jl")
 include(dir*"NodalForceArray.jl")
@@ -101,7 +105,7 @@ export BeamArray
 export ShellArray
 export LinConstrArray
 export end_elements
-# export SuperBeamArray
+export SuperBeamArray
 
 
 
@@ -125,7 +129,7 @@ export set_shell
 export set_linear_constraint
 export shell_stiffness_matrix
 export shell_mass_kernel
-# export set_super_beam
+export set_super_beam
 
 export append_element
 export print_element
