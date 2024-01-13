@@ -4,3 +4,12 @@
 src/.h5
 test/.jld
 test/src/.h5
+.jld
+.h5
+.pdf
+.png
+.jpg
+.mp4
+src/super_element_prepro/
+src/superelement_3D_prepro/
+test/Examples/
