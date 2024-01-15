@@ -1,0 +1,27 @@
+{
+  "Time_Integrator": {
+    "parameters": {
+          "PREC": 1.0e-5,
+          "NitMax": 50,
+          "Npas": 11,
+          "T": 1,
+          "k": 1.0,
+          "verbose": false
+        }
+    },
+    "Eigenvalue_Analysis": {
+      "eigvals": false,
+      "eig_freq": 1,
+      "max_vals": 4
+    },
+  "Output": {
+    "name": "test_NL_beam",
+    "parameters": {
+      "compression_enabled": false,
+      "overwrite_existing_file": true,
+      "save_h5": true,
+      "save_mat": false,
+      "energy_balance": true
+    }
+  }
+}

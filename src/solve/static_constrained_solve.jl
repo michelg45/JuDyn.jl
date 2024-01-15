@@ -248,7 +248,7 @@ function static_constrained_solve(JSON_file::String,uniform_rotation::Bool)
 
         t_start = (Dates.hour(now())*3600+Dates.minute(now())*60+Dates.second(now()))*1000+Dates.millisecond(now())
 
-        println("start static solve")
+        println("start constrained static solve")
 
         Npas == 1 && (Npas = 2)
 
@@ -288,7 +288,6 @@ function static_constrained_solve(JSON_file::String,uniform_rotation::Bool)
         end
                
         while (test > TOL && niter < NitMax || niter < 2)
-          
 
             #
             # iteration matrix, residual vector and load vector are reinitialized.
