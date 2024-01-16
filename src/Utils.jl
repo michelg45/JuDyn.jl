@@ -3,7 +3,6 @@ __precompile__()
 module Utils
 using JLD
 using Plots
-using GeometryBasics,GLMakie
 
 dir= ("utils/")
 
@@ -58,10 +57,9 @@ export cylinder
 include(dir*"read_strain_stresses.jl")
 export read_strain_stresses
 
-include(dir*"record_animation.jl")
 include(dir*"shape_interpol.jl")
 include(dir*"lower_lim.jl")
-export record_animation
+
 export shape_interpol,lower_lim
 
 include(dir*"save_shapes.jl")

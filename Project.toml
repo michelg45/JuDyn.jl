@@ -6,7 +6,6 @@ version = "0.0.1"
 [deps]
 Arpack = "7d9fca2a-8960-54d3-9f78-7d1dccf2cb97"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
-GLMakie = "e9467ef8-e4e7-5192-8a1a-b1aee30e663a"
 GeometryBasics = "5c1252a2-5f33-56bf-86c9-59e7332b4326"
 HDF5 = "f67ccb44-e63f-5c2f-98bd-6dc0ccc4ba2f"
 IJulia = "7073ff75-c697-5162-941a-fcdaad2a7d2a"
@@ -20,6 +19,7 @@ Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 VMLS = "44dac47c-a70e-11e8-3cff-fbf5f1f7c554"
 
 [compat]
