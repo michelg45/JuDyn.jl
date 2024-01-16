@@ -59,7 +59,7 @@ function test_beam_static()
         #
         # static solution
         #
-        JSON_file2 = "test/NL_beam_tests/test_beam_static.json"
+        JSON_file2 = "NL_beam_tests/test_beam_static.json"
         h5_file = solve(JSON_file2,sol_type)
         #
         # results selection
