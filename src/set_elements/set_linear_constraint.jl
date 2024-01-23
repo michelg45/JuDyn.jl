@@ -1,7 +1,7 @@
 """
     set_linear_constraint
   
-        function to define a linear constraint
+        function to define a linear constraint of type coefs'*x - val = 0
 
             Input:
 
