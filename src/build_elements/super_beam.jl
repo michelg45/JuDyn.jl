@@ -44,8 +44,9 @@ function super_beam(nbr::Int,y::Vector,Dy::Vector,ydot::Vector,res::Vector,p::Ve
 
  
  rotation = mc.uniform_rotation
- rotation == true && (Omega_d = mc.rotation_speed; tOmega_d = tilde(Omega_d).mat; 
- S_elast = sbc.S[iel])
+ rotation == true && (Omega_d = mc.rotation_speed; tOmega_d = tilde(Omega_d).mat) 
+ 
+S_elast = sbc.S[iel]
 
  if rotation == true
     time = itime*h

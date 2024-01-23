@@ -15,6 +15,7 @@ function linear_constraint(nbr::Int,y::Vector,Dy::Vector,res::Vector,matrix::Boo
 
     iel = findfirst(x -> x == nbr, lc.numbers)[1]
     nodes = lc.node_orders[iel]
+    components = lc.components[iel]
     coefs = lc.coefs[iel]
     val = lc.val[iel]
     scale_factor = lc.scale_factor[iel]
@@ -37,7 +38,7 @@ function linear_constraint(nbr::Int,y::Vector,Dy::Vector,res::Vector,matrix::Boo
        
     for i = 1:Nx
         ip = nodes[i]        
-        icomp = lc.components[iel][i]
+        icomp = components[i]
         if icomp  > 3 
              psi = cf[ip].psi
              Dpsi = RV3()
