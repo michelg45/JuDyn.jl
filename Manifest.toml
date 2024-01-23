@@ -2,7 +2,7 @@
 
 julia_version = "1.9.4"
 manifest_format = "2.0"
-project_hash = "72c27af4ee2e83cfec842ac076d3503ec02c211a"
+project_hash = "7344174af3a7bbac4425b0c116ab9b29e043bbdc"
 
 [[deps.ASL_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -1048,14 +1048,6 @@ version = "1.6.3"
 git-tree-sha1 = "ca0969166a028236229f63514992fc073799bb78"
 uuid = "41fe7b60-77ed-43a1-b4f0-825fd5a5650d"
 version = "0.2.0"
-
-[[deps.VMLS]]
-deps = ["DelimitedFiles", "LinearAlgebra", "SparseArrays"]
-git-tree-sha1 = "280aa6e165ce70cc67895389708df09a6763fef0"
-repo-rev = "master"
-repo-url = "https://github.com/VMLS-book/VMLS.jl"
-uuid = "44dac47c-a70e-11e8-3cff-fbf5f1f7c554"
-version = "0.4.0"
 
 [[deps.VersionParsing]]
 git-tree-sha1 = "58d6e80b4ee071f5efd07fda82cb9fbe17200868"
