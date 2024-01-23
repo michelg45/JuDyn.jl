@@ -23,7 +23,6 @@ BuildElements
 """
 module BuildElements
 
-using VMLS
 using LinearAlgebra
 using ..MyAlgebra
 using ..Utils

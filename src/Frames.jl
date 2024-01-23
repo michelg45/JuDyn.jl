@@ -13,7 +13,6 @@ __precompile__()
 module Frames
 
 using LinearAlgebra
-using VMLS
 using ..MyAlgebra
 
 dir = "frames/"
