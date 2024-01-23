@@ -13,9 +13,20 @@ link to [MyAlgebra](@ref)
 ## Modules
 
 ```@docs
+Assemble
+BoundaryConditions
+BuildElements
+FORDYN
+Frames
+InitialConditions
+InputFunctions
+JuDyn
 MyAlgebra
 Nodes
+LinearBeam
 SetElements
+Solve
+Utils
 ```
 
 ## FORDYN
@@ -80,44 +91,53 @@ select_results_nodes
 ### Data structures
 
 ```@docs
-RigidBodyArray
-RigidMassArray
-NodeLinkArray
+BeamArray
 FrameLinkArray
 FrameSpringArray
-HingeArray
 GroundHingeArray
 GroundSpringDamperArray
-NodalForceArray
-NodalTorqueArray
+HingeArray
+LinConstrArray
 NodalDispArray
+NodalForceArray
+NodeLinkArray
+NodalTorqueArray
 PrismaticJointArray
-BeamArray
+RigidBodyArray
+RigidMassArray
 ShellArray
+SuperBeamArray
 ```
 
 ### Element definition
 
 ```@docs
-set_rigid_body
+
 set_beam
-set_super_beam
-set_rigid_mass
-set_node_link
-set_node_force
-set_node_torque
-set_node_displacement
 set_frame_link
 set_frame_spring
 set_ground_hinge
-set_hinge
 set_ground_spring_damper
+set_hinge
+set_linear_constraint
+set_node_displacement
+set_node_force
+set_node_link
+set_node_torque
 set_prismatic_joint
+set_rigid_body
+set_rigid_mass
 set_shell
-shell_stiffness_matrix
+set_super_beam
+```
+
+### Auxiliary functions
+
+```@docs
 end_elements
 read_beam_properties
 read_shell_properties
+shell_stiffness_matrix
 ```
 
 ### Linear beam
@@ -197,8 +217,8 @@ distance_to_point
 
 ```@docs
 CurrentFrame
-init_frames
 increment_frames
+init_frames
 ```
 
 
