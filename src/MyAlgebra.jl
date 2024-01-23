@@ -27,7 +27,6 @@ __precompile__()
 module MyAlgebra
 
 using LinearAlgebra
-using VMLS
 using Printf
 
 """
@@ -114,10 +113,14 @@ include(dir*"shape_functions_2D.jl")
 export shape_functions_1D, shape_functions_2D
 include(dir*"gauss_points.jl")
 export gauss_points
-include(dir*"levicivita.jl")
-export levicivita
+include(dir*"eye.jl")
+export eye
+include(dir*"diagonal.jl")
+export diagonal
 
-"""include(dir*"alpha.jl")
+"""include(dir*"levicivita.jl")
+export levicivita
+include(dir*"alpha.jl")
 include(dir*"beta.jl")
 include(dir*"gamma.jl")
 include(dir*"delta.jl")

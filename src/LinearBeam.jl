@@ -2,7 +2,7 @@ __precompile__()
 
 module LinearBeam
 
-using VMLS, LinearAlgebra
+using LinearAlgebra
 using ..MyAlgebra
 using ..Utils
 
@@ -34,7 +34,7 @@ export bar_mass_2D
 export bar_stiffness_2D
 export beam_mass_2D
 export beam_stiffness_2D
-export beam_mass_3D_localjulia
+export beam_mass_3D_local
 export beam_stiffness_3D_local
 export beam_mass_pure_bending_3D_local
 export beam_stiffness_pure_bending_3D_local
