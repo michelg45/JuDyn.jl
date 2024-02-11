@@ -1,18 +1,21 @@
 """
     set_rigid_body
     
-        function to define the topology and inertia properties of a rigid body element.
+Function to define the topology and inertia properties of a rigid body element. It constructs the  `Main.SetElements.rigid_body_container[iel]` array entry (`::RigidBodyArray` type) collecting the intial data.
 
-        constructs the  "Main.SetElements.rigid_body_container" array  (::RigidBodyArray type) collecting the intial data.
+Calling sequence: 
 
-        Calling sequence: set_rigid_body(nbr,node,mass,inertia)
+````{verbatim}
+set_rigid_body(nbr,node,mass,inertia)
+````
+Input data:
 
-        Input data:
-
-        nbr::Int                                number of the element
-        node::Int                               reference node of the rigid body
-        mass::Float64                           mass of the rigid body
-        inertia::Mat3  or  inertia::Vec3        inertia tensor of the rigid body
+| | |
+|:------------------------------------- |:--------------------------------------- |
+|  `nbr::Int` | number of the element | 
+|  `node::Int` | reference node of the rigid body | 
+| `mass::Float64` |  mass of the rigid body | 
+|  `inertia::Mat3`  or  `inertia::Vec3` | inertia tensor of the rigid body | 
 
 """
 function set_rigid_body(nbr::Int,node::Int,mass::Float64,inertia::Mat3)

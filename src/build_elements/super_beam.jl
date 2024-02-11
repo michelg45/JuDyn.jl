@@ -1,9 +1,12 @@
 """
     super_beam
 
-        function constructing the iteration matrix residual vector  of a super-beam element. The element is constructed as a superelement resulting from the assembly of 2 beam elements with cubic interpolation of the deflection. Its stiffness and mass kernel has been construted by Herting's method by the 'super_beam_matrix_kernel.jl' function.
+Function constructing the iteration matrix and the residual vector  of a super-beam element. The element is constructed as a superelement resulting from the assembly of 2 beam elements with cubic interpolation of the deflection. Its linear stiffness and mass kernels have been construted by Herting's method through the `super_beam_matrix_kernel.jl` function. The non-linear correction (`nl_correction` = true) allows introducing geometric stiffening and therefore drastically improves the performance of the element.
 
-            Calling sequence: super_beam_force(nbr,y,Dy,ydot, res,p,alpha_stiff,gamma_p,matrix,itime,h)
+Calling sequence: 
+>
+> `super_beam_force`(nbr,y,Dy,ydot, res,p,`alpha_stiff`,`gamma_p`,matrix,itime,h)
+>
 """
 function super_beam(nbr::Int,y::Vector,Dy::Vector,ydot::Vector,res::Vector,p::Vector,
     alpha_stiff::Float64,gamma_p::Float64,matrix::Bool,itime::Int,h::Float64)
@@ -45,8 +48,7 @@ function super_beam(nbr::Int,y::Vector,Dy::Vector,ydot::Vector,res::Vector,p::Ve
  
  rotation = mc.uniform_rotation
  rotation == true && (Omega_d = mc.rotation_speed; tOmega_d = tilde(Omega_d).mat) 
- 
-S_elast = sbc.S[iel]
+ S_elast = sbc.S[iel]
 
  if rotation == true
     time = itime*h
@@ -238,30 +240,34 @@ f_elast = K_elast*q_elast
 
 if rotation == true 
     Om = (W_0+Omega_d).v
-    G_elast = - (Om[1]*S_elast[1]+Om[2]*S_elast[2]+Om[3]*S_elast[3])
-    f_iner = M_elast*vdot_elast + G_elast*v_elast
+
     A_omega = zeros(12,12)
     A_omega[1:3,1:3] = tOmega_d
     A_omega[7:9,7:9] = tOmega_d
     res_el[iv_P] = v_elast - qdot_elast - A_omega*q_elast
     S_el[ix_0P,iv_P] += transpose(DqDw)*(gamma_p*M_elast + alpha_stiff*G_elast)
     S_el[iv_P,ix_0P] +=  alpha_stiff*DqdotDx + (gamma_p*eye(12)+ alpha_stiff*A_omega)*DqDx
-    svq_dot = zeros(3)
-    sqv_dot = zeros(3)
-    sqv = zeros(3)
-    for i = 1:3
-        svq_dot[i] = -qdot_elast'*S_elast[i]*v_elast
-        sqv_dot[i] = -vdot_elast'*S_elast[i]*q_elast
-        sqv[i] = -v_elast'*S_elast[i]*q_elast
-    end
-    res_el[itheta_0] -=  cross(Om, sqv) + sqv_dot - svq_dot
+
 else 
-    f_iner = M_elast*vdot_elast
+    Om = W_0.v
     res_el[iv_P] = v_elast - qdot_elast
     S_el[ix_0P,iv_P] += gamma_p*transpose(DqDw)*M_elast
     S_el[iv_P,ix_0P] +=  alpha_stiff*DqdotDx + gamma_p*DqDx
 end
 
+G_elast = - (Om[1]*S_elast[1]+Om[2]*S_elast[2]+Om[3]*S_elast[3])
+f_iner = M_elast*vdot_elast + G_elast*v_elast
+
+svq_dot = zeros(3)
+sqv_dot = zeros(3)
+sqv = zeros(3)
+for i = 1:3
+    svq_dot[i] = -qdot_elast'*S_elast[i]*v_elast
+    sqv_dot[i] = -vdot_elast'*S_elast[i]*q_elast
+    sqv[i] = -v_elast'*S_elast[i]*q_elast
+end
+
+res_el[itheta_0] -=  cross(Om, sqv) + sqv_dot - svq_dot
 res_el[ix_0P] -=  transpose(DqDw)*(f_elast+f_iner)
 S_el[ix_0P,ix_0P] += alpha_stiff*transpose(DqDw)*K_elast*DqDx
 S_el[iv_P,iv_P] = - alpha_stiff*eye(12)
@@ -286,11 +292,12 @@ end
 """
     super_beam_force
 
-        function constructing the residual vector  of a super-beam element. The element is constructed as a superelement resulting from the assembly of 2 beam elements with cubic interpolation of the deflection. Its stiffness and mass kernel has been construted by Herting's method by the 'super_beam_matrix_kernel.jl' function.
+Function constructing the residual vector  of a super-beam element. The element is constructed as a superelement resulting from the assembly of 2 beam elements with cubic interpolation of the deflection. Its linear stiffness and mass kernels have been construted by Herting's method using the `super_beam_matrix_kernel.jl` function. The non-linear correction (`nl_correction` = true) allows introducing geometric stiffening and therefore drastically improves the performance of the elemment.
 
-        Calling sequence: super_beam_force(nbr,y,Dy,ydot, res,p)
-
-
+Calling sequence: 
+>
+> `super_beam_force`(nbr,y,Dy,ydot, res,p,itime,h)
+>
 """
 function super_beam_force(nbr::Int,y::Vector,Dy::Vector,ydot::Vector,res::Vector,p::Vector)
 
@@ -308,9 +315,8 @@ function super_beam_force(nbr::Int,y::Vector,Dy::Vector,ydot::Vector,res::Vector
  res_el  = Vector{Float64}(zeros(ndim))
  p_el  = Vector{Float64}(zeros(ndim))
 
- # DqDx = Array{Float64,2}(zeros(12,18))
  DqDw = Array{Float64,2}(zeros(12,18))
- # DqdotDx = Array{Float64,2}(zeros(12,18))
+
 
  #
  # Getting detailed characteristics  of the superelement from "superelement_container"
@@ -329,8 +335,8 @@ function super_beam_force(nbr::Int,y::Vector,Dy::Vector,ydot::Vector,res::Vector
 
  
  rotation = mc.uniform_rotation
- rotation == true && (Omega_d = mc.rotation_speed; tOmega_d = tilde(Omega_d).mat; 
- S_elast = sbc.S[iel])
+ rotation == true && (Omega_d = mc.rotation_speed; tOmega_d = tilde(Omega_d).mat) 
+ S_elast = sbc.S[iel]
 
 if rotation == true
     time = itime*h
@@ -415,9 +421,6 @@ T_0 = tang(Dpsi_0)
 W_0 = T_0*psidot_0
 DW_0 = Dtang(psidot_0,Dpsi_0)
 
-# W0R0T = tilde(W_0)*transpose(R_0)
-
-
 
 v_0 = Vec3(s[iv_0]+Ds[iv_0])
 vdot_0 = Vec3(sdot[iv_0])
@@ -489,26 +492,27 @@ f_elast = K_elast*q_elast
 
 if rotation == true 
     Om = (W_0+Omega_d).v
-    G_elast = - (Om[1]*S_elast[1]+Om[2]*S_elast[2]+Om[3]*S_elast[3])
-    f_iner = M_elast*vdot_elast + G_elast*v_elast
     A_omega = zeros(12,12)
     A_omega[1:3,1:3] = tOmega_d
     A_omega[7:9,7:9] = tOmega_d
     res_el[iv_P] = v_elast - qdot_elast - A_omega*q_elast
-    svq_dot = zeros(3)
-    sqv_dot = zeros(3)
-    sqv = zeros(3)
-    for i = 1:3
-        svq_dot[i] = -qdot_elast'*S_elast[i]*v_elast
-        sqv_dot[i] = -vdot_elast'*S_elast[i]*q_elast
-        sqv[i] = -v_elast'*S_elast[i]*q_elast
-    end
-    res_el[itheta_0] -=  cross(Om, sqv) + sqv_dot - svq_dot
 else 
-    f_iner = M_elast*vdot_elast
+    Om = W_0.v
     res_el[iv_P] = v_elast - qdot_elast
 end
 
+G_elast = - (Om[1]*S_elast[1]+Om[2]*S_elast[2]+Om[3]*S_elast[3])
+f_iner = M_elast*vdot_elast + G_elast*v_elast
+
+svq_dot = zeros(3)
+sqv_dot = zeros(3)
+sqv = zeros(3)
+for i = 1:3
+    svq_dot[i] = -qdot_elast'*S_elast[i]*v_elast
+    sqv_dot[i] = -vdot_elast'*S_elast[i]*q_elast
+    sqv[i] = -v_elast'*S_elast[i]*q_elast
+end
+res_el[itheta_0] -=  cross(Om, sqv) + sqv_dot - svq_dot
 res_el[ix_0P] -=  transpose(DqDw)*(f_elast+f_iner)
 
 str_el = 1.0/2.0*transpose(q_elast)*f_elast

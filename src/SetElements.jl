@@ -11,16 +11,12 @@ __precompile__()
 """
 module SetElements
 
-
-
 using LinearAlgebra
 using ..MyAlgebra
 using ..Utils
 using ..LinearBeam
 using JSON
-
-
-
+using JLD
 
 dir = "set_elements/"
 
@@ -77,6 +73,10 @@ include(dir*"FrameSpringArray.jl")
 include(dir*"set_ground_spring_damper.jl")
 include(dir*"GroundSpringDamperArray.jl")
 
+include(dir*"set_super_element.jl")
+include(dir*"SEMatrixSet.jl")
+include(dir*"read_SE_herting.jl")
+
 include(dir*"append_element.jl")
 include(dir*"read_beam_properties.jl")
 include(dir*"read_shell_properties.jl")
@@ -85,7 +85,7 @@ include(dir*"pull_vectors.jl")
 include(dir*"find_element_components.jl")
 include(dir*"find_element_dof.jl")
 include(dir*"end_elements.jl")
-
+include(dir*"SuperElementArray.jl")
 
 
 export RigidBodyArray
@@ -106,7 +106,8 @@ export ShellArray
 export LinConstrArray
 export end_elements
 export SuperBeamArray
-
+export SEMatrixSet
+export SuperElementArray
 
 
 
@@ -130,6 +131,7 @@ export set_linear_constraint
 export shell_stiffness_matrix
 export shell_mass_kernel
 export set_super_beam
+export set_super_element
 
 export append_element
 export print_element
@@ -138,5 +140,6 @@ export find_element_components
 export find_element_dof
 export read_beam_properties
 export read_shell_properties
+export read_SE_herting
 
 end # module

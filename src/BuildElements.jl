@@ -40,6 +40,8 @@ include("build_elements/shell.jl")
 
 include("build_elements/super_beam.jl")
 
+include("build_elements/super_element.jl")
+
 include("build_elements/node_link.jl")
 
 include("build_elements/node_force.jl")
@@ -95,6 +97,8 @@ export shell
 export shell_force
 export super_beam
 export super_beam_force
+export super_element
+export super_element_force
 export ground_spring_damper
 export ground_spring_damper_force
 export push_element_sparse

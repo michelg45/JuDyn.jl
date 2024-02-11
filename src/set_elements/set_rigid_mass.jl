@@ -1,17 +1,21 @@
 """
     set_rigid_mass
+
+Function to define the topology and inertia properties of a rigid mass element. It constructs the  `Main.SetElements.rigid_mass_container[iel]` array entry (`::RigidMassArray` type) collecting the intial data.
     
-        function to define the topology and inertia properties of a rigid mass element.
+Calling sequence: 
 
-        constructs the  "Main.SetElements.rigid_mass_container" array  (::RigidMassArray type) collecting the intial data.
+````{verbatim}
+set_rigid_mass(nbr,node,mass)
+````
 
-        Calling sequence: set_rigid_mass(nbr,node,mass)
+Input data:
 
-        Input data:
-
-        nbr::Int                                number of the element
-        node::Int                               reference node of the element
-        mass::Float64                           mass of the element
+| | |
+|:------------------------------------- |:--------------------------------------- |
+|  `nbr::Int` | number of the element | 
+|  `node::Int` | reference node of the rigid body | 
+| `mass::Float64` |  mass of the rigid body | 
 
 """
 function set_rigid_mass(nbr::Int,node::Int,mass::Float64)

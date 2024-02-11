@@ -1,9 +1,11 @@
+
+
 I want to make an hyperlink to Nodes
 
 # JuDyn documentation
 
 ```@contents
-Pages = ["index.md"]
+Pages = ["/home/michel22/Projects/Julia/JUDYN/JuDyn/docs/src/intro.md"]
 Depth  = 3
 ```
 
@@ -107,6 +109,7 @@ RigidBodyArray
 RigidMassArray
 ShellArray
 SuperBeamArray
+SEMatrixSet
 ```
 
 ### Element definition
@@ -129,6 +132,7 @@ set_rigid_body
 set_rigid_mass
 set_shell
 set_super_beam
+set_super_element
 ```
 
 ### Auxiliary functions
@@ -138,6 +142,7 @@ end_elements
 read_beam_properties
 read_shell_properties
 shell_stiffness_matrix
+read_SE_herting
 ```
 
 ### Linear beam

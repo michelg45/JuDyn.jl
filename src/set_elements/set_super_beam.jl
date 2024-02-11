@@ -1,33 +1,44 @@
 """
     set_super_beam
 
-        Function defining the topology of a straight beam between nodes nodes[1] and nodes[2]
-        The node of reference 'ref_node' corresponds the floating center of mass.
-        The first reference axis at ref_node must be aligned with the beam reference line.
-        The other two reference axes define the cross-section orientation.
+Function defining the topology of a straight beam between nodes `nodes[1]` and `nodes[2]`.
+The node of reference `ref_node` corresponds the floating center of mass.
+The first reference axis at `ref_node` must be aligned with the beam reference line.
+The other two reference axes define the cross-section orientation.  
+It constructs the array `super_beam_container[iel]`  containing
 
-        It constructs the array super_beam_container[iel]  containing
+* the geometric and topological data
+* the elements  describing the linear behavior of the element  in the local frame:
 
-        * the geometric and topological data
-        * the elements  describing the linear behavior of the element  in the local frame: 
-            mass::Float64               total mass of the element.
-            Jrot::Array{Float64}        inertia tensor of the element.
-            K_elast::Array{Float64}     reduced linear stiffness matrix.
-            M_elast::Array{Float64}     reduced linear mass matrix associated to elastic modes.
-            S::Array{Float64}           matrix allowing to compute the deformation-dependent contribution to elastic forces.    
+| | |
+|:---------------------- |:--------------------------------------- |
+| `mass::Float64` | total mass of the element.|
+| `Jrot::Array{Float64}` | inertia tensor of the element. |
+| `K_elast::Array{Float64}`  | reduced linear stiffness matrix. |
+| `M_elast::Array{Float64}` |    reduced linear mass matrix associated to elastic modes. |
+| `S::Array{Float64}`          | matrix allowing to compute the deformation-dependent contribution to elastic forces. | 
 
-        To get more infomation on the contruction method, see function 'super_beam_matrix_kernel.jl'.
 
-        input: 
-            nbr::Int                                element number
-            ref_node::Int                           reference node at mid-length
-            nodes::Vector{Int}                      end nodes of the beam element
-            stiffness_properties::Vector{Float64}   stiffness properties of the element mass_properties::Vector{Float64}        mass properties of the element
-            nl_correction::Bool                     nonlinear correction parameter (geometric  stiffness correction) : 'true' if omitted.
+To get more infomation  about the construction method of the `super_beam element`,  see functions  `super_beam.jl` (`BuildElements` module) and `super_beam_matrix_kernel.jl` (`LinearBeam` module).
 
-        Calling sequences: 
-            set_super_beam(nbr,ref_node,nodes,stiffness_properties,mass_properties,nl_correction)
-            set_super_beam(nbr,ref_node,nodes,stiffness_properties,mass_properties)
+input:
+
+| | |
+|:------------------------------------- |:--------------------------------------- |
+| `nbr::Int` | element number |
+| `ref_node::Int`|  reference node at mid-length | 
+| `nodes::Vector{Int}` |  end nodes of the beam element | 
+| `stiffness_properties::Vector{Float64}` |  stiffness properties of the element | 
+|  `mass_properties::Vector{Float64}` |  mass properties of the element | 
+| `nl_correction::Bool` |  nonlinear correction parameter (geometric  stiffness correction) : _true_ if omitted. | 
+
+Calling sequences: 
+
+````{verbatim}
+set_super_beam(nbr,ref_node,nodes,stiffness_properties,mass_properties,nl_correction)
+
+set_super_beam(nbr,ref_node,nodes,stiffness_properties,mass_properties)
+````
 
 """
 function set_super_beam(nbr::Int,ref_node::Int,nodes::Vector{Int}, stiffness_properties::Vector{Float64},mass_properties::Vector{Float64},nl_correction::Bool)

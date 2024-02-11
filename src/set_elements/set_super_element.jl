@@ -2,9 +2,17 @@
 """
     set_super_element
     
-        Function defining the topology of a superelement.
-        The set of nodes consists of a reference node  'ref_node' at the floating center of mass, itnitially located at the CM location of the rigid elements, and of NB boundary nodes of coordinates XB. The set of dofs at the boundary nodes can be 3 (translation only) or 6 (translation and rotation).  NI is the number of internal (elastic) modes complementing the model. The superelement matrices will be read from an array 'SEMatrixSet' type containing at set of superelements used in the model.
+Function defining the topology of a superelement. The set of nodes consists of a reference node  '`ref_node`' at the floating center of mass, initially located at the CM location of the rigid elements, and of '`N_B`' boundary nodes of coordinates `'X_B'`. The set of dofs at the boundary nodes can be 3 (translation only) or 6 (translation and rotation).  '`N_I`' is the number of internal (elastic) modes complementing the model. 
 
+Calling sequences: 
+>
+> `set_super_element(nbr,node_ref,N_B,N_I,boundary_nodes,connected_components,X_B,SE_name,matrix_set,SE_type,nl_corr)`
+>
+> or 
+>
+> `set_super_element(nbr,node_ref,N_B,N_I,boundary_nodes,connected_components, X_B,SE_name,matrix_set,SE_type)`
+>    
+The superelement matrices will be read from an array '`SEMatrixSet`' type containing at set of superelements used in the model. The topology and constitutive matrices of the superelement 
 
 """
 function set_super_element(nbr::Int,node_ref::Int,N_B::Int,N_I::Int,boundary_nodes::Vector{Int},connected_components::Vector{Int}, X_B::Array{Float64,2},SE_name::String,matrix_set::Int,SE_type::String,nl_corr::Bool)
@@ -18,7 +26,7 @@ function set_super_element(nbr::Int,node_ref::Int,N_B::Int,N_I::Int,boundary_nod
         global superelement_container=SuperElementArray()
         sec = superelement_container
     else
-        sec = Main.SuperElements.superelement_container
+        sec = Main.SetElements.superelement_container
     end
 
     append!(sec.numbers,nbr)

@@ -56,7 +56,7 @@ function dynamic_element_forces(Nel::Int64, element_numbers::Vector{Int},
             global ext_work += ext_work_el
             str_energy += str_el        
         elseif el_type == "superelement"
-                (pot_el,kin_el, str_el) = superelement_herting_force(nbr,y_n,Dy,ydot_np1,res,p)
+                (pot_el,kin_el, str_el) = super_element_force(nbr,y_n,Dy,ydot_np1,res,p)
                 kin_energy += kin_el
                 str_energy += str_el
                 pot_energy += pot_el 

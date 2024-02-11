@@ -57,7 +57,7 @@ function dynamic_element_system(Nel::Int64, element_numbers::Vector{Int},
             kin_energy += kin_el
             pot_energy += pot_el
         elseif el_type == "superelement"
-            (pot_el,kin_el, str_el) = superelement_herting(nbr,y_n,Dy,ydot_np1,res,p,theta_p,alpha_stiff,matrix)
+            (pot_el,kin_el, str_el) = super_element(nbr,y_n,Dy,ydot_np1,res,p,theta_p,alpha_stiff,matrix)
             kin_energy += kin_el
             str_energy += str_el
             pot_energy += pot_el

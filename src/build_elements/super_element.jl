@@ -1,21 +1,21 @@
 """
-    superelement
+    super_element
 """
-function superelement(nbr::Int,y::Vector,Dy::Vector,ydot::Vector,res::Vector,p::Vector,theta_p::Float64,
+function super_element(nbr::Int,y::Vector,Dy::Vector,ydot::Vector,res::Vector,p::Vector,theta_p::Float64,
     alpha_stiff::Float64,matrix::Bool)
 
     nc = Main.node_container
     mc =  Main.model_container
     cf =  Main.Frames.current_frames
     ec =  Main.element_container
-    sec = Main.SuperElements.superelement_container
+    sec = Main.SetElements.superelement_container
     sem = Main.SE_matrices
 
 
     iel = findfirst(x -> x == nbr, sec.numbers)[1]
 
     rotation = mc.uniform_rotation
-    rotation == true && (Omega_d = mc.rotation_speed)
+    rotation == true ? Omega_d = mc.rotation_speed : Omega_d = Vec3()
     grav = mc.gravity
 
     #
@@ -30,6 +30,9 @@ function superelement(nbr::Int,y::Vector,Dy::Vector,ydot::Vector,res::Vector,p::
     N_I = sem[imx].N_I
     K = sem[imx].K
     M = sem[imx].M
+    S_rot = sem[imx].S_rot
+
+    
 
     iq_B = [i for i in 1:N_B]
     K_BB = K[iq_B,iq_B]
@@ -40,16 +43,13 @@ function superelement(nbr::Int,y::Vector,Dy::Vector,ydot::Vector,res::Vector,p::
         K_II = K[iq_I,iq_I];
         K_BI = K[iq_B,iq_I])
 
-    rotation == true && (
-        S_rot = sem[imx].S_rot;
-        A_rot = sem[imx].A_rot)
-
     ndim = (N_B + N_I + Nrig)*2
 
 
     S_el = Array{Float64,2}(zeros(ndim,ndim))
     res_el  = Vector{Float64}(zeros(ndim))
     p_el  = Vector{Float64}(zeros(ndim))
+    A_omega = zeros(size(K))
 
     DqDx = Array{Float64,2}(zeros(N_B,N_B+6))
     DqDw = Array{Float64,2}(zeros(N_B,N_B+6))
@@ -133,8 +133,8 @@ function superelement(nbr::Int,y::Vector,Dy::Vector,ydot::Vector,res::Vector,p::
 
     Dx_0 = Vec3(Ds[ix_0])
     Dpsi_0 = RV3(Ds[itheta_0])
-    x_0 = cf[nodes[3]].x + Dx_0
-    psi_0 = RV3(cf[nodes[3]].psi,Dpsi_0)
+    x_0 = cf[node_0].x + Dx_0
+    psi_0 = RV3(cf[node_0].psi,Dpsi_0)
     xdot_0 = Vec3(sdot[ix_0])
     R_0 = rot(psi_0)
     R_0T =  transpose(R_0)
@@ -143,7 +143,8 @@ function superelement(nbr::Int,y::Vector,Dy::Vector,ydot::Vector,res::Vector,p::
     W_0 = T_0*psidot_0
     DW_0 = Dtang(psidot_0,Dpsi_0)
  
-  
+    Om = W_0 + Omega_d
+    tOmega_d =  tilde(Omega_d).mat
 
     W0R0T = tilde(W_0)*R_0T
 
@@ -152,7 +153,7 @@ function superelement(nbr::Int,y::Vector,Dy::Vector,ydot::Vector,res::Vector,p::
 if rotation == true 
 
     ROmega_d = rot(-psi_0,Omega_d)
-    tOmega_d =  tilde(Omega_d).mat
+   
     res_el[ix_0] =  (mass*(grav - vdot_0 - crossp(Omega_d,v_0))).v
     res_el[iv_0]= (v_0 - xdot_0 - crossp(Omega_d,x_0)).v 
     res_el[itheta_0] = -(J*Omegadot_0 + crossp(W_0+ROmega_d, J*Omega_0)).v
@@ -250,6 +251,8 @@ end
         udot_P= rot(-psi_0,(xdot_P - xdot_0)) + crossp(Xpu,W_0)
         coef = tilde(udot_P)*T_0 + tilde(W_0)*tXpuT + tXpu*DW_0
 
+        A_omega[iq_P[1:3],iq_P[1:3]] = tOmega_d
+
         if irotB[iP] == true
 
             itheta_P = ix_P[4:6]
@@ -329,8 +332,7 @@ end
 
 
 
-    Om = W_0 + Omega_d
-    A_omega = Om.v'*A_rot
+    
     G = - (Om[1]*S_rot[1]+Om[2]*S_rot[2]+Om[3]*S_rot[3])
     res_el[iv] -= A_omega*q
     res_el[ix] -= G*v
@@ -353,12 +355,12 @@ end
 #
 
 
-if rotation == true
+
     s_qv = Vec3([q'*S_rot[i]*v  for i in 1:3]) 
     s_qvdot = [q'*S_rot[i]*vdot  for i in 1:3] 
     s_vqdot = [v'*S_rot[i]*qdot  for i in 1:3]
     res_el[itheta_0] -= (crossp(Om,s_qv)).v - s_vqdot + s_qvdot
-end
+
 
 #
 # transformation of boundary node contribution to global coordinates
@@ -388,21 +390,22 @@ end
 end
 
 """
-    superelement_force
+    super_element_force
 """
-function superelement_force(nbr::Int,y::Vector,Dy::Vector,ydot::Vector,res::Vector,p::Vector)
+function super_element_force(nbr::Int,y::Vector,Dy::Vector,ydot::Vector,res::Vector,p::Vector)
 
     mc =  Main.model_container
     cf =  Main.Frames.current_frames
     ec =  Main.element_container
-    sec = Main.SuperElements.superelement_container
+    sec = Main.SetElements.superelement_container
     sem = Main.SE_matrices
 
 
     iel = findfirst(x -> x == nbr, sec.numbers)[1]
 
     rotation = mc.uniform_rotation
-    rotation == true && (Omega_d = mc.rotation_speed)
+    rotation == true ? Omega_d = mc.rotation_speed : Omega_d = Vec3()
+
     grav = mc.gravity
 
     #
@@ -417,6 +420,7 @@ function superelement_force(nbr::Int,y::Vector,Dy::Vector,ydot::Vector,res::Vect
     N_I = sem[imx].N_I
     K = sem[imx].K
     M = sem[imx].M
+    S_rot = sem[imx].S_rot
 
     iq_B = [i for i in 1:N_B]
     iq = [i for i in 1:N_B+N_I]
@@ -431,7 +435,7 @@ function superelement_force(nbr::Int,y::Vector,Dy::Vector,ydot::Vector,res::Vect
 
     res_el  = Vector{Float64}(zeros(ndim))
     p_el  = Vector{Float64}(zeros(ndim))
-
+    A_omega = zeros(size(K))
     DqDw = Array{Float64,2}(zeros(N_B,N_B+6))
 
 
@@ -507,8 +511,8 @@ function superelement_force(nbr::Int,y::Vector,Dy::Vector,ydot::Vector,res::Vect
     Omegadot_0= Vec3(sdot[iomega_0])
     Dx_0 = Vec3(Ds[ix_0])
     Dpsi_0 = RV3(Ds[itheta_0])
-    x_0 = cf[nodes[3]].x + Dx_0
-    psi_0 = RV3(cf[nodes[3]].psi,Dpsi_0)
+    x_0 = cf[node_0].x + Dx_0
+    psi_0 = RV3(cf[node_0].psi,Dpsi_0)
     xdot_0 = Vec3(sdot[ix_0])
     R_0 = rot(psi_0)
     R_0T =  transpose(R_0)
@@ -516,6 +520,8 @@ function superelement_force(nbr::Int,y::Vector,Dy::Vector,ydot::Vector,res::Vect
     psidot_0 = Vec3(sdot[itheta_0])
     W_0 = T_0*psidot_0
 
+    Om = W_0 + Omega_d
+    tOmega_d =  tilde(Omega_d).mat
 
     p_el[ix_0] = (mass*grav).v
 
@@ -538,10 +544,6 @@ end
 
 
     id_0 = [ix_0; itheta_0]
-
-
-
-
 
     #
     # Preparing contribution of internal modes
@@ -603,6 +605,8 @@ end
 
         u_P = Xpu - X_P
         udot_P= rot(-psi_0,(xdot_P - xdot_0)) + crossp(Xpu,W_0)
+
+        A_omega[iq_P[1:3],iq_P[1:3]] = tOmega_d
 
         if irotB[iP] == true
 
@@ -670,8 +674,6 @@ end
     elast_kin_el = 1.0/2.0*transpose(v)*mv
     res_el[ix] = - (Fel + M*vdot)
 
-    Om = W_0 + Omega_d
-    A_omega = Om.v'*A_rot
     G = - (Om[1]*S_rot[1]+Om[2]*S_rot[2]+Om[3]*S_rot[3])
     res_el[iv] -= A_omega*q
     res_el[ix] -= G*v
@@ -682,12 +684,12 @@ end
 #   Contribution of elatic modes to RB motion
 #
 
-if rotation == true
+
     s_qv = Vec3([q'*S_rot[i]*v  for i in 1:3]) 
     s_qvdot = [q'*S_rot[i]*vdot  for i in 1:3] 
     s_vqdot = [v'*S_rot[i]*qdot  for i in 1:3]
     res_el[itheta_0] -= (crossp(Om,s_qv)).v - s_vqdot + s_qvdot
-end
+
 
 #
 # transformation of boundary node contribution to global coordinates

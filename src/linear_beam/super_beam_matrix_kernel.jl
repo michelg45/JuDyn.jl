@@ -1,7 +1,7 @@
 """
     super_beam_matrix_kernel
 
-    Construction of the linear matrix kernel of for a "super_beam"  model  using Herting'method. The model results from the assembly of 2 linear beam models based on cubic interpolation of the bending deflection.
+    Construction of the linear matrix kernel of for a "super_beam"  model  using Herting's method. The model results from the assembly of 2 linear beam models based on cubic interpolation of the bending deflection and linear interpolation of the shear force.
 
     Calling sequence: 
         mass, Jrot, K_elast, M_elast = super_beam_matrix_kernel(length, stiffness_properties, mass_properties)
@@ -10,13 +10,13 @@
     Input:
         length::Float64		  			        length of the beam element
         stiffness_properties::Vector{Float64}	stiffness parameters as input to  function "linear_beam_element".
-        mass_properties::Vector{Float64}		mass parameters as s input to  function "linear_beam_element".
+        mass_properties::Vector{Float64}		mass parameters as  input to  function "linear_beam_element".
 
     Output:
         M_rig::Array{Float64,2}					6x6 inertia tensor of rigid body
         K_elast::Array{Float64,2}				stiffness matrix asssociated to pure elastic deformation
         M_elast::Array{Float64,2}				associated mass matrix
-        S::Array{Float64,2}                      associated gyroscopic matrix.
+        S::Array{Float64,2}                     associated gyroscopic matrix.
 """
     function super_beam_matrix_kernel(length::Float64,stiffness_properties::Vector{Float64}, mass_properties::Vector{Float64})
 

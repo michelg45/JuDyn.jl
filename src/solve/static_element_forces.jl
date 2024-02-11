@@ -49,7 +49,12 @@ function static_element_forces(Nel::Int64, element_numbers::Vector{Int},element_
         elseif el_type == "lin_constr"
             linear_constraint_force(nbr,y_n,Dy,res)
         elseif el_type == "super_beam"
-            (pot_el,kin_el, str_el) = super_beam(nbr,y_n,Dy,ydot_np1,res,p,theta_p,itime,h)
+            (pot_el,kin_el, str_el) = super_beam_force(nbr,y_n,Dy,ydot_np1,res,p,theta_p,itime,h)
+            str_energy += str_el
+            pot_energy += pot_el
+        elseif el_type == "superelement"
+            (pot_el,kin_el, str_el) = super_element_force(nbr,update,y_n,Dy,ydot_np1,res,p,theta_p)
+            kin_energy += kin_el
             str_energy += str_el
             pot_energy += pot_el
 
@@ -65,11 +70,7 @@ function static_element_forces(Nel::Int64, element_numbers::Vector{Int},element_
         elseif el_type == "frame_spring"
             str_el = frame_spring(nbr,res)
             str_energy += str_el
-        elseif el_type == "superelement"
-            (pot_el,kin_el, str_el) = superelement_herting(nbr,update,y_n,Dy,ydot_np1,res,p,theta_p)
-            kin_energy += kin_el
-            str_energy += str_el
-            pot_energy += pot_el
+
 
 
         elseif el_type == "node_torque"

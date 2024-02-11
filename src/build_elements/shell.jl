@@ -1,43 +1,46 @@
 """
     shell
 
-    function constructing the residual vector and the iteration matrix of a shell element. The material can be elastic or viscoeslatic. I is then described by a viscoeslatic model of Mawell or Kelvin-Voigt types.
+Function constructing the residual vector and the iteration matrix of a shell element. The material can be elastic or viscoeslatic. It is then described by a viscoeslatic model of Mawell or Kelvin-Voigt types.
 
-    The material type is governed by the 'visco_type' parameter provided bot the shell_container array.
-
-        * visco_type = "none"       elastic material
-        * visco_type = "maxwell"    Maxwell viscoelastic material
-        * visco_type = "damped"   Kelvin-Voigt viscoelastic material
-
-
-        The Maxwell material model is described as 
-
-        stress =  K_infty .* strain + K_b .* time_constants .* alpha_dot
-
-        strain  =  time_constants .* alpha_dot + alpha
-
-        with    
+The material type is governed by the `visco_type` parameter provided by the `shell_container` array.
         
-        K_infty = K * ratio_infty   and     K_B = K * (1.0 - ratio_infty)
+* `visco_type` = "none"       elastic material
+* `visco_type` = "maxwell"    Maxwell viscoelastic material
+* `visco_type` = "damped"   Kelvin-Voigt viscoelastic material
 
-        and with the 'time_constants' vector defined as
-
-        tau_shear = tau_S
-        tau_ext = 1.0/3.0*((1-2.0*nu)*tau_B + 2.0*(1.0+nu)*tau_S)
-        time_constants[1] = tau_ext
-        time_constants[5:6] .= tau_ext
-        time_constants[2:4] .= tau_shear
+The _Maxwell_ material model is described as 
     
-        The Kelvin-Voigt material model is described as 
-
-        stress =  K_infty .* strain + K_b .* time_constants .* strain_dot
-
+> ``\\sigma`` =  ``K_{\\infty} . \\epsilon + K_{b} . \\tau . \\dot\\alpha``
+>
+> ``\\alpha  + \\tau \\dot \\alpha = \\epsilon``
+>
+> with    
+>        
+> ``K_{\\infty} = r_{\\infty} K ``   and     ``K_{b} = (1.0 - r_{\\infty})K``
+>
+> and with the vector of time_constants defined as
+> 
+> `` \\tau  = [\\tau_{E}, \\, \\tau_S, \\, \\tau_S ] ``
+>
+> with
+>
+>``\\tau_{E} = \\frac{1}{3}/((1-2\\nu)\\tau_B + 2(1+\\nu)\\tau_S)``
+>
+> and
+> 
+> ``\\tau_B``  and ``\\tau_{S}`` being the time constants of the 3D-material in bulk deformation and  shear.  
         
-        calling sequence:
-
-        kin_el, str_el, pot_el = shell(nbr,y_n,Dy,ydot_np1,res,p,alpha_stiff,theta_p,matrix,itime,niter,h)
-
-
+The _Kelvin-Voigt_ material model is described as 
+    
+>
+> ``\\sigma`` =  ``K_{\\infty} . \\epsilon + K_{b}  . \\dot\\epsilon``
+>
+           
+Calling sequence:
+>
+> `kin_el`, `str_el`, `pot_el` = `shell_force`(nbr,`y_n`,Dy,`ydot_np1`,res,p,`alpha_stiff`,`theta_p`,matrix,itime,niter,h)
+>
 """
 function shell(nbr::Int,y::Vector{Float64},Dy::Vector{Float64},ydot::Vector{Float64},
     res::Vector{Float64},p::Vector{Float64}, alpha_stiff::Float64,theta_p::Float64,matrix::Bool,itime::Int,niter::Int,h::Float64)
@@ -333,11 +336,13 @@ end
 """
     shell_force
 
-    function constructing the residual vector  of an elastic shell element
+Function constructing the residual vector  of an elastic shell element. The material can be elastic or viscoeslatic. It is then described by a viscoeslatic model of Mawell or Kelvin-Voigt types as explained for the function `shell`.
         
-        calling sequence:
+Calling sequence:
+>
+> `kin_el`, `str_el`, `pot_el` = `shell_force`(nbr,`y_n`,Dy,`ydot_np1`,res,p,itime,niter,h)
+>
 
-        kin_el, str_el, pot_el = shell_force(nbr,y_n,Dy,ydot_np1,res,p,itime,niter,h)
 
         
 """
