@@ -76,6 +76,7 @@ include(dir*"GroundSpringDamperArray.jl")
 include(dir*"set_super_element.jl")
 include(dir*"SEMatrixSet.jl")
 include(dir*"read_SE_herting.jl")
+include(dir*"write_SE_herting.jl")
 
 include(dir*"append_element.jl")
 include(dir*"read_beam_properties.jl")
@@ -141,5 +142,6 @@ export find_element_dof
 export read_beam_properties
 export read_shell_properties
 export read_SE_herting
+export write_SE_herting
 
 end # module

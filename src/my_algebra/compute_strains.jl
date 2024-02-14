@@ -1,3 +1,6 @@
+"""
+    compute_strains
+"""
 function compute_strains(H::Vector{NodeFrame},H_0::Vector{NodeFrame},p::Vector{Vector},F::Vector,DF::Array,J::Array,Nnodes::Int)
 
     global invA = zeros(6,6)

@@ -1,5 +1,12 @@
 __precompile__()
 
+"""
+    JuDyn
+
+"JuDyn.jl" is  is the main module of the package. It automatically includes all the sub-modules [`Assemble`](@ref), [`BoundaryConditions`](@ref), [`BuildElements`](@ref), [`FORDYN`](@ref), 
+[`Frames`](@ref),  [`InitialConditions`](@ref),  [`InputFunctions`](@ref),  [`MyAlgebra`](@ref),  [`Nodes`](@ref),  [`LinearBeam`](@ref), [`SetElements`](@ref),  [`Solve`](@ref), [`Utils`](@ref) of the package and their external dependencies (_LinearAlgebra_, _SparseArrays, _Arpack_, _JSON_, _JLD_, _HDF5_, _Revise_, _Reexport_, etc. ). 
+
+"""
 module JuDyn
 
 using Revise

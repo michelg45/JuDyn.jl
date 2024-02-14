@@ -7,5 +7,6 @@ push!(LOAD_PATH,"./src/")
 # makedocs(format = DocumenterLaTeX.LaTeX(),sitename="JuDyn")
 # pages = ["Home" => "index.md", "Manual" => "intro.md"]
 makedocs(
-pages = Any["Home " => "index.md", "Introduction" => "intro.md"], 
+pages = [ "Home " => "index.md", "User Guide" => Any[ "Introduction" => "intro.md", 
+"Modules"  => "modules.md"]], 
 sitename="JuDyn")

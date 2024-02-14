@@ -1,5 +1,8 @@
 __precompile__()
 
+"""
+    LinearBeam
+"""
 module LinearBeam
 
 using LinearAlgebra

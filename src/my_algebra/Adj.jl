@@ -1,3 +1,6 @@
+"""
+    Adj
+"""
 function Adj(H::NodeFrame)
     R = rot(H.p)
     return  [R.mat (tilde(H.x)*R).mat; zeros(3,3) R.mat]

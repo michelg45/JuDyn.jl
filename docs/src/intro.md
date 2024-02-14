@@ -118,13 +118,12 @@ The **LinearBeam** module allows assembling linear beam models which can be used
 
 A number of external modules are also used in the control flow of a **JuDyn** application and we be called during the **JuDyn** precompiling phase. In particular, 
 
-* for linear algebra and matrix handling: **LinearAlgebra*,  **SparseArrays**, **Arpack**;
+* for linear algebra and matrix handling: **LinearAlgebra**,  **SparseArrays**, **Arpack**;
 * for file manipulation: **JSON**, **JLD**, **HDF5**.
 * for graphics: **Plots**, **GeometryBasics**, **GLMakie**, **CairoMakie**,
 * for solving constrained systms: **JuMP**, **IpOpt**, **DataFrames**,
 * for time measurement: **Dates**.
 
-## Example: top motion
 
 The simple example of **JuDyn** script below allows computing the center of mass trajectory of a top rotating in a gravity flow (Figure 2). It shows how the sript for the solution of a specific problem is organized using the **JuDyn** series of modules.
 

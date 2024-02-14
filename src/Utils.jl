@@ -1,5 +1,8 @@
 __precompile__()
 
+"""
+    Utils
+"""
 module Utils
 using JLD
 using Plots
@@ -67,8 +70,5 @@ include(dir*"save_shape.jl")
 include(dir*"read_shape.jl")
 
 export save_shape,save_shapes,read_shape
-
-include(dir*"mat_fill.jl")
-export mat_fill
 
 end # module

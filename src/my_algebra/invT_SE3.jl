@@ -1,3 +1,6 @@
+"""
+    invT_SE3
+"""
 function invT_SE3(p::Vector)
     size(p,1) != 6 && (error("Vector p must have size 6"))
     rv = RV3(p[4:6])

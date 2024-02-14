@@ -1,3 +1,6 @@
+"""
+    DinvT_SE3
+"""
 function DinvT_SE3(p::Vector, a::Vector)
     
     prec = 1.e-6

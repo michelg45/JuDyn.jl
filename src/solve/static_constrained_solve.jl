@@ -99,6 +99,8 @@ function static_constrained_solve(JSON_file::String,uniform_rotation::Bool)
 
     h5_file = problem_name*sh5
 
+    isfile(h5_file) && rm(h5_file)
+
     #
     # Reading model topology  from the diffrent containers
     #

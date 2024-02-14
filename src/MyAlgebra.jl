@@ -3,25 +3,31 @@ __precompile__()
 """
     MyAlgebra
 
-    "MyAlgebra.jl" is a module  introducing different user types and the associated operations.
+"MyAlgebra.jl" is a module  introducing different algebraic user types and the associated operations.
 
-    User Types are noted with capital letters (Vec3, Mat3, RV3, Quat, NodeFrame)
-    and ordinary functions start with lower case letters
-    Constructors provide type conversion.
+User Types are noted with capital letters (_Vec3_, _Mat3_, _RV3_, _Quat_, _NodeFrame_)  and ordinary functions start with lower case letters.  Constructors provide type conversion.
 
-    The user types are:
+The user types are:
+>
+>  _Vec3_ :    vector with 3 components (e.g. position, velocity, Euler angles). 
+> 
+> _Mat3_ :    3 x 3 matrix (e.g. rotation and tangent operators).
+>
+> _RV3_ :  rotation vector `` \\mathbf{n}  \\phi ``.
+>
+> _Quat_ :  quaternion  `` \\mathbf{q} = [q_0,  q_1, q_2, q_3] `` .
+>
+> _NodeFrame_ :   compound structural type to describe a nodal frame `` \\mathbf{H} (\\mathbf{x}, \\mathbf{p}) `` ,  with translation and rotation parts  _(x::Vec3, p::RV3)_.   
+>
 
-    Vec3 vector with 3 components (e.g. position, velocity, Euler angles)
-    Mat3 3 x 3 matrix (e.g. rotation and tangent operators)
-    RV3 rotation vector n*phi
-    Quat quaternion [q_0 q_1 q_2 q_3]
-    NodeFframe is a compound structural type to describe a nodal frame,  with translation and rotation parts  (x::Vec3, 
-    p::RV3).
 
-        mutable struct NodeFrame
-            x::Vec3
-            p::RV3
-        end
+|           |                                                                     |
+|:----------|:--------------------------------------------------------------------|
+|  _Vec3_ |    vector with 3 components (e.g. position, velocity, Euler angles). |
+|  _Mat3_ |    3 x 3 matrix (e.g. rotation and tangent operators). |
+|  _RV3_ |  rotation vector `` \\mathbf{n}  \\phi ``. |
+| _Quat_ |  quaternion  `` \\mathbf{q} = [q_0,  q_1, q_2, q_3] `` . |
+|  _NodeFrame_ |   compound structural type to describe a nodal frame `` \\mathbf{H} (\\mathbf{x}, \\mathbf{p}) `` ,  with translation and rotation parts  _(x::Vec3, p::RV3)_.  | 
 
 """
 module MyAlgebra

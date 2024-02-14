@@ -4,7 +4,7 @@
 function read_SE_herting(SE_file)
 
         file = jldopen(SE_file)
-        SE_name = SE_file[1:5]
+        SE_name = read(file,"SE_name")
         SE_type = "herting"
 
         Nrig = read(file,"Nrig")

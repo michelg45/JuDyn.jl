@@ -1,3 +1,7 @@
+
+"""
+    frame_solve
+"""
 function frame_solve(H::Vector{NodeFrame},F::Vector,DF::Array,J::Array,Nnodes::Int)
     global tol = 1.e-012
     

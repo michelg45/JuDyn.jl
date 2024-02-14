@@ -42,7 +42,7 @@ function eig_solve(y::Vector{Float64},Dy::Vector{Float64},ydot::Vector{Float64},
             inv_loc, S_el = rigid_body(nbr,y_n,Dy,ydot_np1,res,p,alpha_stiff,theta_p,matrix,itime,h)
             A[inv_loc,inv_loc] += S_el
         elseif el_type == "superelement"
-             inv_loc, S_el =super_element(nbr,y,Dy,ydot,"stiffness")
+             inv_loc, S_el =super_element(nbr,y,Dy,ydot_np1,res,p,theta_p,alpha_stiff,matrix)
              A[inv_loc,inv_loc] += S_el
         elseif el_type == "ground_hinge"
              inv_loc, S_el = ground_hinge(nbr,Dy,y_n,res,p,niter,itime,h,matrix)
@@ -89,7 +89,7 @@ function eig_solve(y::Vector{Float64},Dy::Vector{Float64},ydot::Vector{Float64},
             inv_loc, S_el = rigid_body(nbr,y_n,Dy,ydot_np1,res,p,alpha_stiff,theta_p,matrix,itime,h)
             B[inv_loc,inv_loc] += S_el
         elseif el_type == "superelement"
-            inv_loc, S_el = super_element(nbr,y,Dy,ydot,"mass")
+            inv_loc, S_el = super_element(nbr,y,Dy,ydot_np1,res,p,theta_p,alpha_stiff,matrix)
             B[inv_loc,inv_loc] += S_el
         elseif el_type == "rigid_mass"
              inv_loc, S_el = rigid_mass(nbr,y,Dy,ydot,res,p,alpha_stiff,theta_p,matrix,itime,h)

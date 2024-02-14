@@ -2,21 +2,24 @@
     set_frame_link
 
 
-    function which 
+Function which 
 
-    * defines the topology of a rigid connection between nodes node1 and node 2
-    * Takes into account the relative position between the nodes
-    * defines a set of 6 Lagrange multipliers
-    * constructs the array JuDyn.SetElements.frame_link_container[iel] 
+* defines the topology of a rigid connection between nodes 'node1' and 'node2'.
+* Takes into account the relative position between the nodes.
+* Defines a set of 6 Lagrange multipliers to express the connection.
+* Stores the intial positions and orientations of the nodes into the element entry `SetElements.frame_link_container[iel]`. 
 
-    Calling squence: 
-
+Calling squence: 
+````{verbatin}
         set_frame_link(nbr,node1,node2)
+````
+    
+Input:
 
-    Input:
-        
-        nbr: element number
-        node1, node2: nodes connected by the frame link element.
+|               |                                            |    
+|:--------------|:---------------------------------------------|
+| `nbr` | element number |
+| `node1, node2` | nodes connected by the frame link element. |
 
 """
 function set_frame_link(nbr::Int,node1::Int,node2::Int,scale_factor::Float64)

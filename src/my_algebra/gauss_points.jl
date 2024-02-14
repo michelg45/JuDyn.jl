@@ -1,3 +1,6 @@
+"""
+    gauss_points
+"""
 function gauss_points(ndim::Int, npoints::Int)
     if ndim == 1
         if npoints == 1

@@ -1,3 +1,6 @@
+"""
+    frame_solve1
+"""
 function frame_solve1(H::Vector{NodeFrame},F::Vector,DF::Array,Nnodes::Int)
 
     global p = Vector{Vector}(undef,Nnodes)

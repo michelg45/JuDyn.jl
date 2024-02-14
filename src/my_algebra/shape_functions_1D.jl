@@ -1,3 +1,7 @@
+
+"""
+     shape_functions_1D
+"""
 function shape_functions_1D(Nnodes,xi)
     if Nnodes == 2
          F = [0.5*(1.0-xi); 0.5*(1.0+xi)]

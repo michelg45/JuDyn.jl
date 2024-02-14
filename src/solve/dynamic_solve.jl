@@ -91,6 +91,8 @@ function dynamic_solve(JSON_file)
 
     h5_file = problem_name*sh5
 
+    isfile(h5_file) && rm(h5_file)
+
 
     #
     # Reading model topology  from the diffrent containers
