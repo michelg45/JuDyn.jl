@@ -10,6 +10,7 @@ test/src/.h5
 .png
 .jpg
 .mp4
-src/super_element_prepro_2D/
+src/super_element_2D_prepro/
 src/superelement_3D_prepro/
+src/extras/
 test/Examples/
