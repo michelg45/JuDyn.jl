@@ -75,6 +75,24 @@ function set_beam(nbr::Int,nodes::Vector{Int},ref_orientation::RV3,stiffness_pro
     return
 end
 
+function set_beam(nbr::Int,nodes::Vector{Int},stiffness_properties::Vector{Float64},
+    mass_properties::Vector{Float64})
+
+    nc = Main.node_container
+
+    x_1=copy(nc.init_positions[nodes[1]])
+    x_2=copy(nc.init_positions[nodes[2]])
+
+    ref_orientation = frame_on_line(x_1,x_2)
+
+    constant_inertia = false
+
+    set_beam(nbr,nodes,ref_orientation,stiffness_properties,
+    mass_properties,constant_inertia)
+    
+    return
+end
+
 
 function set_beam(nbr::Int,nodes::Vector{Int},ref_orientation::RV3,stiffness_properties::Vector{Float64},
         mass_properties::Vector{Float64},constant_inertia::Bool, tau_B::Float64, tau_S::Float64, ratio_infty::Float64, visco_type::String)
@@ -121,7 +139,7 @@ function set_beam(nbr::Int,nodes::Vector{Int},ref_orientation::RV3,stiffness_pro
     x_2=copy(nc.init_positions[n2])
     length = norm2(x_2-x_1)
     PREC=sqrt(eps(Float64))
-    if norm(rot(ref_orientation).mat[1,:]-1.0/length*(x_2 - x_1).v) > PREC
+    if norm(rot(ref_orientation).mat[:,1]-1.0/length*(x_2 - x_1).v) > PREC
         println(1.0/length*(x_2 - x_1).v)
         println(norm(rot(ref_orientation).mat[:,1]-1.0/length*(x_2 - x_1).v))
         error(" beam element ", nbr, "  reference frame not aligned on beam axis")
