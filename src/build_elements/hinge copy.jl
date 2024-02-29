@@ -1,7 +1,7 @@
 """
     hinge
 """
-function hinge(nbr::Int,Dy::Vector,y_n::Vector,ydot::Vector,res::Vector,p::Vector,alpha_stiff::Float64,theta_p::Float64,matrix::Bool,niter::Int,itime::Int,h::Float64)
+function hinge(nbr::Int,Dy::Vector,y_n::Vector,res::Vector,p::Vector,niter::Int,itime::Int,h::Float64,matrix::Bool)
 
 
     hc = Main.SetElements.hinge_container
@@ -16,7 +16,7 @@ function hinge(nbr::Int,Dy::Vector,y_n::Vector,ydot::Vector,res::Vector,p::Vecto
     k = hc.scale_factor[iel]
     params = hc.params[iel]
 
-    str_time_function != " " &&  (time_function = input_functions[str_time_function])
+    time_function = input_functions[str_time_function]
 
     mode == "driven" ? ndim = 18 : ndim =19
 
@@ -55,7 +55,15 @@ function hinge(nbr::Int,Dy::Vector,y_n::Vector,ydot::Vector,res::Vector,p::Vecto
     #
 
 
-    s, Ds, sdot = pull_vectors(inv_loc, y_n, Dy,ydot)
+    if  mode != "driven"
+        s = pull_vectors(inv_loc, Dy)
+        if niter == 1
+             Dy[inv_loc_int] .= 0.0
+             y_n[inv_loc_int] .= 0.0
+        end
+    else
+        s_n, s = pull_vectors(inv_loc, y_n, Dy)
+    end
 
     i_x = [i for i=1:12]
     i_x1 = i_x[1:3]
@@ -66,14 +74,12 @@ function hinge(nbr::Int,Dy::Vector,y_n::Vector,ydot::Vector,res::Vector,p::Vecto
     if mode != "driven"
         i_int = 13
         imult= [i for i=14:19]
-        x_int_n = s[i_int]
-        xdot_int = sdot[i_int]
-        Dx_int = Ds[i_int]
-        mult = Ds[imult]
+        x_int = s[i_int]
+        mult = s[imult]
     else
         imult = [i for i=13:18]
-        mult = Ds[imult]
-        mult_theta_av = 0.5*(s[imult[4:6]]+Ds[imult[4:6]])
+        mult = s[imult]
+        mult_theta_av = 0.5*(s_n[imult[4:6]]+s[imult[4:6]])
     end
 
     imult_x = imult[1:3]
@@ -81,10 +87,10 @@ function hinge(nbr::Int,Dy::Vector,y_n::Vector,ydot::Vector,res::Vector,p::Vecto
     mult_x = Vec3(mult[1:3])
     mult_theta = Vec3(mult[4:6])
 
-    Dpsi_1 = RV3(Ds[i_theta1])
-    Dpsi_2 = RV3(Ds[i_theta2])
-    x1 = cf[inode1].x + Vec3(Ds[i_x1])
-    x2 = cf[inode2].x + Vec3(Ds[i_x2])
+    Dpsi_1 = RV3(s[i_theta1])
+    Dpsi_2 = RV3(s[i_theta2])
+    x1 = cf[inode1].x + Vec3(s[i_x1])
+    x2 = cf[inode2].x + Vec3(s[i_x2])
     psi1 = RV3(cf[inode1].psi,Dpsi_1)
     psi2 = RV3(cf[inode2].psi,Dpsi_2)
 
@@ -96,7 +102,6 @@ function hinge(nbr::Int,Dy::Vector,y_n::Vector,ydot::Vector,res::Vector,p::Vecto
         psi_hinge = RV3(alpha*xi)
         alpha -= time_function(itime-1,h,params)
     else
-        x_int = x_int_n + Dx_int
         psi_hinge = RV3(x_int*xi)
     end
 
@@ -114,7 +119,7 @@ function hinge(nbr::Int,Dy::Vector,y_n::Vector,ydot::Vector,res::Vector,p::Vecto
 
     psi_rel = RV3(-RV3(psi1,or1), RV3(psi2,or2))
     R_hinge = rot(psi_hinge)
-    u_psi = RV3(-psi_hinge,psi_rel)
+    u_psi = RV3(-psi_hinge, psi_rel)
 
     res_el[imult_x] = k*u_x.v
     res_el[imult_theta] = k*u_psi.v
@@ -157,14 +162,6 @@ function hinge(nbr::Int,Dy::Vector,y_n::Vector,ydot::Vector,res::Vector,p::Vecto
 #        S_el[i_theta1, i_int] = k*(rot(RV3(or1,psi_hinge))*tilde(axis)).mat*mult_theta
     end
 
-    if mode == "spring"
-        stiffness = params[1]
-        damping = params[2]
-        alpha_0 = params[3]
-        res_el[i_int] -= (stiffness*(x_int - alpha_0) + damping*xdot_int)
-        S_el[i_int,i_int]  += alpha_stiff*stiffness + theta_p*damping
-    end
-
     if matrix == false
 
         push_element_sparse(res,p,iel2,inv_loc,S_el,res_el,p_el)
@@ -177,9 +174,7 @@ function hinge(nbr::Int,Dy::Vector,y_n::Vector,ydot::Vector,res::Vector,p::Vecto
             ext_work_el =  torque*phi
         end
 
-    mode == "spring" ? str_el = 0.5*stiffness*(x_int - alpha_0)^2 : str_el = 0.0
-
-        return str_el, ext_work_el
+        return ext_work_el
     else 
         return inv_loc, S_el = condensed_element_matrix(iel2,inv_loc,S_el)
     end
@@ -189,7 +184,7 @@ end
 """
     hinge_force
 """
-function hinge_force(nbr::Int,Dy::Vector,y_n::Vector,ydot::Vector{Float64},res::Vector,p::Vector,niter::Int,itime::Int,h::Float64)
+function hinge_force(nbr::Int,Dy::Vector,y_n::Vector,res::Vector,p::Vector,niter::Int,itime::Int,h::Float64)
 
 
     hc = Main.SetElements.hinge_container
@@ -203,9 +198,10 @@ function hinge_force(nbr::Int,Dy::Vector,y_n::Vector,ydot::Vector{Float64},res::
     k = hc.scale_factor[iel]
     params = hc.params[iel]
 
-    str_time_function != " " &&  (time_function = input_functions[str_time_function])
+    time_function = input_functions[str_time_function]
 
-    mode == "driven" ? ndim = 18 : ndim = 19
+    mode == "driven" ? ndim = 18 : ndim =19
+
 
     res_el  = Vector{Float64}(zeros(ndim))
     p_el  = Vector{Float64}(zeros(ndim))
@@ -222,6 +218,7 @@ function hinge_force(nbr::Int,Dy::Vector,y_n::Vector,ydot::Vector{Float64},res::
     or1 = hc.orientations[iel][1]
     or2 = hc.orientations[iel][2]
     axis = hc.axis[iel]
+
 
     iel2 = findfirst(x -> x == nbr, ec.element_numbers)[1]
 
@@ -240,7 +237,15 @@ function hinge_force(nbr::Int,Dy::Vector,y_n::Vector,ydot::Vector{Float64},res::
     #
 
 
-    s, Ds, sdot = pull_vectors(inv_loc, y_n, Dy,ydot)
+    if  mode != "driven"
+        s = pull_vectors(inv_loc, Dy)
+        if niter == 1
+             Dy[inv_loc_int] .= 0.0
+             y_n[inv_loc_int] .= 0.0
+        end
+    else
+        s_n, s = pull_vectors(inv_loc, y_n, Dy)
+    end
 
     i_x = [i for i=1:12]
     i_x1 = i_x[1:3]
@@ -251,14 +256,12 @@ function hinge_force(nbr::Int,Dy::Vector,y_n::Vector,ydot::Vector{Float64},res::
     if mode != "driven"
         i_int = 13
         imult= [i for i=14:19]
-        x_int_n = s[i_int]
-        xdot_int = sdot[i_int]
-        Dx_int = Ds[i_int]
-        mult = Ds[imult]
+        x_int = s[i_int]
+        mult = s[imult]
     else
         imult = [i for i=13:18]
-        mult = Ds[imult]
-        mult_theta_av = 0.5*(s[imult[4:6]]+Ds[imult[4:6]])
+        mult = s[imult]
+        mult_theta_av = 0.5*(s_n[imult[4:6]]+s[imult[4:6]])
     end
 
     imult_x = imult[1:3]
@@ -266,10 +269,11 @@ function hinge_force(nbr::Int,Dy::Vector,y_n::Vector,ydot::Vector{Float64},res::
     mult_x = Vec3(mult[1:3])
     mult_theta = Vec3(mult[4:6])
 
-    Dpsi_1 = RV3(Ds[i_theta1])
-    Dpsi_2 = RV3(Ds[i_theta2])
-    x1 = cf[inode1].x + Vec3(Ds[i_x1])
-    x2 = cf[inode2].x + Vec3(Ds[i_x2])
+
+    Dpsi_1 = RV3(s[i_theta1])
+    Dpsi_2 = RV3(s[i_theta2])
+    x1 = cf[inode1].x + Vec3(s[i_x1])
+    x2 = cf[inode2].x + Vec3(s[i_x2])
     psi1 = RV3(cf[inode1].psi,Dpsi_1)
     psi2 = RV3(cf[inode2].psi,Dpsi_2)
 
@@ -281,25 +285,13 @@ function hinge_force(nbr::Int,Dy::Vector,y_n::Vector,ydot::Vector{Float64},res::
         psi_hinge = RV3(alpha*xi)
         alpha -= time_function(itime-1,h,params)
     else
-        x_int = x_int_n + Dx_int
         psi_hinge = RV3(x_int*xi)
     end
-
-
-
-    R1 = rot(psi1)
-    R2 = rot(psi2)
-    T1 = tang(Dpsi_1)
-    T2 = tang(Dpsi_2)
-
-    R1r = rot(or1)
-    R2r = rot(or2)
 
     u_x = x2 + rot(psi2,X2) - x1 - rot(psi1,X1)
 
     psi_rel = RV3(-RV3(psi1,or1), RV3(psi2,or2))
-    R_hinge = rot(psi_hinge)
-    u_psi = RV3(-psi_hinge,psi_rel)
+    u_psi = RV3(-psi_hinge, psi_rel)
 
     res_el[imult_x] = k*u_x.v
     res_el[imult_theta] = k*u_psi.v
@@ -312,21 +304,13 @@ function hinge_force(nbr::Int,Dy::Vector,y_n::Vector,ydot::Vector{Float64},res::
         res_el[i_int] =  -k*transpose(xi)*mult_theta.v
     end
 
-
     if mode == "force"
         torque = time_function(itime,h,params)
         p_el[i_int] = torque
         res_el[i_int] += torque
         torque = 0.5*(torque+time_function(itime-1,h,params))
-    end
 
-    if mode == "spring"
-        stiffness = params[1]
-        damping = params[2]
-        alpha_0 = params[3]
-        res_el[i_int] -= (stiffness*(x_int - alpha_0) + damping*xdot_int)
     end
-
 
     for i = 1:ndim
         iloc = inv_loc[i] 
@@ -341,9 +325,7 @@ function hinge_force(nbr::Int,Dy::Vector,y_n::Vector,ydot::Vector{Float64},res::
         ext_work_el =  torque*phi
     end
 
-    mode == "spring" ? str_el = 0.5*stiffness*(x_int - alpha_0)^2 : str_el = 0.0
-
-    return str_el, ext_work_el
+    return ext_work_el
 
 end
 

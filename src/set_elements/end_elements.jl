@@ -1,3 +1,6 @@
+"""
+    end_elements
+"""
 function end_elements()
     ec = Main.element_container
     mc = Main.model_container

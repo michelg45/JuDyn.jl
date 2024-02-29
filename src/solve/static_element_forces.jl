@@ -57,6 +57,10 @@ function static_element_forces(Nel::Int64, element_numbers::Vector{Int},element_
             kin_energy += kin_el
             str_energy += str_el
             pot_energy += pot_el
+        elseif el_type == "prismatic_joint"    
+            str_el, ext_work_el = prismatic_joint_force(nbr,Dy,y_n,ydot_np1,res,p,itime,h)
+            ext_work += ext_work_el
+            str_energy += str_el
 
     """        elseif el_type == "ground_spherical_joint"   
             ground_spherical_joint_force(nbr,Dy,res)

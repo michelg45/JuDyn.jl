@@ -1,37 +1,36 @@
 """
     set_shell
     
-        function to define the topology and structural / geometric / properties of a shell element.
+Function to define the topology and structural / geometric / properties of a shell element.       The shell topology is defined by a variable  size set of connected nodes and a variable number of Gauss integration points. It constructs the  "SetElements.shell_container" array  (::ShellArray type) collecting the intial data.
 
-        Defines the topology of a shell  with variable  set of connected nodes and number of Gauss integration points.
-        constructs the  "Main.SetElements.shell_container" array  (::ShellArray type) collecting the intial data.
+Input data:
 
-        Input data:
+|  | | 
+|:-----------------------------------|:-------------------------------|
+| nbr::Int | number of the element |
+| connected_nodes::Vector{Int}  | set of nodes of the element |
+| thickness::Float64 | shell thickness |
+| stiffness_properties::Vector{Float64} | [E, nu] |
+| mass_properties::Vector{Float64} | [rho] |
+| ngauss_points::Int  | number of Gauss points |
+| visco_type::String | "none", "maxwell" or "damped" |
+| ratio_infty::Int | fraction of elastic stiffness at infinity  |
+| tau_b::Float64  | viscoeleastic time constant in bending |
+| tau_S::Float64  |   viscoeleastic time constant in shear|
 
-        nbr::Int                                number of the element
-        connected_nodes::Vector{Int}            set of nodes of the element
-        thickness::Float64                      shell thickness
-        stiffness_properties::Vector{Float64}   [E, nu]
-        mass_properties::Vector{Float64}        [rho]
-        ngauss_points::Int                      number of Gauss points
+ 2 instances of the calling sequence:
 
-        visco_type::String                      "none", "maxwell" or "damped"
-        ratio_infty::Int                        fraction of elastic stiffness at infinity 
-        tau_b::Float64                          viscoeleastic time constant in bending 
-        tau_S::Float64                          viscoeleastic time constant in shear
+ ````{verbatim}
+ for an elastic shell:
 
+    set_shell(nbr,connected_nodes, thickness, stiffness_properties,
+        mass_properties,ngauss_points)
 
-        2 instances of the calling sequence:
+for a viscoelastic shell:
 
-        for an elastic shell:
-
-            set_shell(nbr,connected_nodes, thickness, stiffness_properties,mass_properties,ngauss_points)
-
-        for a viscoelastic shell:
-
-            set_shell(nbr,connected_nodes, thickness, stiffness_properties,mass_properties,ngauss_points,
-            tau_B,tau_S, ratio_infty, visco_type)
-
+    set_shell(nbr,connected_nodes,thickness,stiffness_properties,
+        mass_properties,ngauss_points,tau_B,tau_S,ratio_infty,visco_type)
+````
 """  
 function set_shell(nbr::Int,connected_nodes::Vector{Int}, thickness::Float64, stiffness_properties::Vector{Float64},
     mass_properties::Vector{Float64},ngauss_points::Int)

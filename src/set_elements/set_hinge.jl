@@ -120,3 +120,13 @@ function set_hinge(nbr::Int,node1::Int,node2::Int,pos1::Vec3,or1::RV3,pos2::Vec3
         scale_factor = 1.0
         set_hinge(nbr,node1,node2,pos1,or1,pos2,or2,axe,scale_factor,mode,func,params)
     end
+
+    function set_hinge(nbr::Int,node1::Int,node2::Int,axe::Vec3,mode::String,params::Vector{Float64})
+
+        scale_factor = 1.0
+        func = " "
+        pos = Vec3()
+        or = RV3()
+
+        set_hinge(nbr,node1,node2,pos,or,pos,or,axe,scale_factor,mode,func,params)
+    end

@@ -35,6 +35,10 @@ function  eigenvalue_system_dynamic(Nel::Int64, element_numbers::Vector{Int64},e
         elseif el_type == "shell"
             inv_loc, S_el =  shell(nbr,y_n,Dy,ydot_np1,res,p,alpha_stiff,theta_p,matrix,itime,niter,h)
             A[inv_loc,inv_loc] += S_el
+        elseif el_type == "hinge"
+            inv_loc, S_el =  hinge(nbr,Dy,y_n,ydot_np1,res,p,alpha_stiff,theta_p,matrix,niter,itime,h)
+        elseif el_type == "ground_hinge"
+            inv_loc, S_el =  ground_hinge(nbr,Dy,y_n,ydot_np1,res,p,alpha_stiff,theta_p,matrix,niter,itime,h)   
         end
     end 
    
@@ -61,6 +65,10 @@ function  eigenvalue_system_dynamic(Nel::Int64, element_numbers::Vector{Int64},e
         elseif el_type == "shell"
             inv_loc, S_el =   shell(nbr,y_n,Dy,ydot_np1,res,p,alpha_stiff,theta_p,matrix,itime,niter,h)
             B[inv_loc,inv_loc] += S_el
+        elseif el_type == "hinge"
+            inv_loc, S_el =  hinge(nbr,Dy,y_n,ydot_np1,res,p,alpha_stiff,theta_p,matrix,niter,itime,h)
+        elseif el_type == "ground_hinge"
+            inv_loc, S_el =  ground_hinge(nbr,Dy,y_n,ydot_np1,res,p,alpha_stiff,theta_p,matrix,niter,itime,h)   
         end
     end
 

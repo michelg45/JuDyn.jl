@@ -63,10 +63,10 @@ function rot(psi::RV3,a::Vec3)
 """
     rot(phi,axe)
 
-Function computing the rotation operator `R::Mat3` resulting from a rotation angle         `phi::Float64 about a coordinate axis  `axe::Int` (1,2 or 3).
+Function computing the rotation operator `R::Mat3` resulting from a rotation angle `phi::Float64 about a coordinate axis  `axe::Int` (axe = 1,2 or 3).
 
 ````math        
-\\mathbf{R} = rot(\\phi,\\mathbf{n})
+\\mathbf{R} = rot(\\phi,\\mathbf{n}) 
 ````
 Calling sequence: 
 
@@ -79,9 +79,9 @@ function rot(phi::Float64,axe::Int)
 
     n=zeros(3)
     n[axe]=1.0
-    R=Mat3(diagm(cos(phi)*(ones(3)-n)+n))+sin(phi)*tilde(Vec3(n))
+    a = RV3(phi*n)
 
-    return R
+    return rot(a)
 
 end
 

@@ -1,3 +1,7 @@
+
+"""
+read_shell_properties
+"""
 function read_shell_properties(JSON_file::String,name::String)
 
   open(JSON_file,"r") do f

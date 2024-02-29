@@ -66,7 +66,12 @@ function static_element_system(Nel::Int64, element_numbers::Vector{Int},element_
         elseif el_type == "super_beam"
             (pot_el,kin_el, str_el) = super_beam(nbr,y_n,Dy,ydot_np1,res,p,theta_p,itime,h)
             str_energy += str_el
-            pot_energy += pot_el   
+            pot_energy += pot_el 
+        elseif el_type == "prismatic_joint"    
+            str_el, ext_work_el = prismatic_joint(nbr,Dy,y_n,ydot_np1,res,p,alpha_stiff,theta_p,matrix,itime,h)
+            ext_work += ext_work_el
+            str_energy += str_el
+            
 """        elseif el_type == "ground_spherical_joint"
             ground_spherical_joint(nbr,Dy,res,alpha_stiff,matrix)
         elseif el_type == "spherical_joint"

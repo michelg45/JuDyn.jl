@@ -1,13 +1,14 @@
 """
     HingeArray
 
-    Data structure for ground hinge element
-        * elemnt number
-        * position of node 1 and 2 in "node_container"
-        * hinge position relatively to nodes 1 and 2
-        * node orientation relatively to nodes 1 and 2
-        * orientation of hinge axis in relative frame
-        * driving function label
+Data structure for  hinge element
+
+* elemnt number
+* position of node 1 and 2 in "node_container"
+* hinge position relatively to nodes 1 and 2
+* hinge orientation relatively to nodes 1 and 2
+* orientation of hinge axis in relative frame
+* driving function label
 
 """
 mutable struct HingeArray

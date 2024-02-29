@@ -123,6 +123,10 @@ include(dir*"eye.jl")
 export eye
 include(dir*"diagonal.jl")
 export diagonal
+include(dir*"diagonal.jl")
+export diagonal
+include(dir*"frame_on_line.jl")
+export frame_on_line
 
 """include(dir*"levicivita.jl")
 export levicivita

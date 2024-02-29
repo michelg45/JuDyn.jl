@@ -45,7 +45,7 @@ function eig_solve(y::Vector{Float64},Dy::Vector{Float64},ydot::Vector{Float64},
              inv_loc, S_el =super_element(nbr,y,Dy,ydot_np1,res,p,theta_p,alpha_stiff,matrix)
              A[inv_loc,inv_loc] += S_el
         elseif el_type == "ground_hinge"
-             inv_loc, S_el = ground_hinge(nbr,Dy,y_n,res,p,niter,itime,h,matrix)
+             inv_loc, S_el = ground_hinge(nbr,Dy,y_n,ydot_np1,res,p,alpha_stiff,theta_p,matrix,niter,itime,h)
              A[inv_loc,inv_loc] += S_el
         elseif el_type == "rigid_mass"
              inv_loc, S_el = rigid_mass(nbr,y,Dy,ydot,res,p,alpha_stiff,theta_p,matrix,itime,h)
@@ -57,11 +57,15 @@ function eig_solve(y::Vector{Float64},Dy::Vector{Float64},ydot::Vector{Float64},
              inv_loc, S_el = frame_link(nbr,Dy,res,matrix)
              A[inv_loc,inv_loc] += S_el
         elseif el_type == "hinge"   
-             inv_loc, S_el = hinge(nbr,Dy,y_n,res,p,niter,itime,h,matrix)
+             inv_loc, S_el = hinge(nbr,Dy,y_n,ydot_np1,res,p,alpha_stiff,theta_p,matrix,niter,itime,h)
              A[inv_loc,inv_loc] += S_el
         elseif el_type == "ground_spring_damper"
              inv_loc, S_el = ground_spring_damper(nbr,Dy,ydot_np1,ydot_n,res,alpha_stiff,theta_p,matrix)
-             A[inv_loc,inv_loc] += S_el 
+             A[inv_loc,inv_loc] += S_el
+        elseif el_type == "prismatic_joint"    
+            inv_loc, S_el = prismatic_joint(nbr,Dy,y_n,ydot_np1,res,p,alpha_stiff,theta_p,matrix,itime,h)
+            A[inv_loc,inv_loc] += S_el
+
         end
 
     end 
@@ -91,12 +95,21 @@ function eig_solve(y::Vector{Float64},Dy::Vector{Float64},ydot::Vector{Float64},
         elseif el_type == "superelement"
             inv_loc, S_el = super_element(nbr,y,Dy,ydot_np1,res,p,theta_p,alpha_stiff,matrix)
             B[inv_loc,inv_loc] += S_el
+        elseif el_type == "ground_hinge"
+            inv_loc, S_el = ground_hinge(nbr,Dy,y_n,ydot_np1,res,p,alpha_stiff,theta_p,matrix,niter,itime,h)
+            B[inv_loc,inv_loc] += S_el
         elseif el_type == "rigid_mass"
              inv_loc, S_el = rigid_mass(nbr,y,Dy,ydot,res,p,alpha_stiff,theta_p,matrix,itime,h)
              B[inv_loc,inv_loc] += S_el
+        elseif el_type == "hinge"   
+            inv_loc, S_el = hinge(nbr,Dy,y_n,ydot_np1,res,p,alpha_stiff,theta_p,matrix,niter,itime,h)
+            B[inv_loc,inv_loc] += S_el
         elseif el_type == "ground_spring_damper"
              inv_loc, S_el = ground_spring_damper(nbr,Dy,ydot_np1,ydot_n,res,alpha_stiff,theta_p,matrix)
              B[inv_loc,inv_loc] += S_el
+        elseif el_type == "prismatic_joint"    
+            inv_loc, S_el = prismatic_joint(nbr,Dy,y_n,ydot_np1,res,p,alpha_stiff,theta_p,matrix,itime,h)
+            B[inv_loc,inv_loc] += S_el
         end
         
     end

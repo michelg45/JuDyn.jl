@@ -51,7 +51,7 @@
     
         # nc.locs[inode][1:3] .= 0
         # nc.inv_locs[inode][1:3] .= 0
-        loc_x = copy(nc.locs[inode][4:6])
+        loc_x = copy(nc.locs[inode][1:6])
         loc_v = Int[]
     
         if mode == "driven"
@@ -60,8 +60,8 @@
             loc_int= [(mc.max_int+1)]
             mc.max_int += 1
         end
-        loc_mult= collect(mc.max_mult +i for i=1:3)
-        mc.max_mult += 3
+        loc_mult= collect(mc.max_mult +i for i=1:6)
+        mc.max_mult += 6
     
     
         append_element(nbr,"ground_hinge",[inode],loc_x,loc_int,loc_v,loc_mult)
@@ -74,10 +74,15 @@
     end
     
     function set_ground_hinge(nbr::Int,node::Int,axe::Vec3)    
-        mode = "force"
-        func = "null_torque"
+        mode = "free"
+        func = " "
         params = [0.0]
         scale_factor = 1.0
         set_ground_hinge(nbr,node,axe,scale_factor,mode,func,params)
     end
     
+    function set_ground_hinge(nbr::Int,node::Int,axe::Vec3,mode::String,params::Vector{Float64})
+        scale_factor = 1.0
+        func = " "
+        set_ground_hinge(nbr,node,axe,scale_factor,mode,func,params)
+    end

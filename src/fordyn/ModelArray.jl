@@ -1,7 +1,8 @@
 """
     ModelArray
 
-        Module definning  the  data structure that contains the general data of the model. It is defined in the FORDYN module.
+Data structure containing the general data of the model. Its full content can be consulted in the source code.
+
 """
 mutable struct ModelArray
 
@@ -52,7 +53,16 @@ mutable struct ModelArray
     init_file::String
 
 
-    function ModelArray(Name)
+"""
+    ModelArray()
+
+Function creating an array of ModelArray type.
+
+Calling sequence (once by the create_model function) : 
+      
+            global model_container = ModelArray() 
+"""
+function ModelArray(Name)
 
         Nodes=0
         Elements=0
@@ -116,8 +126,9 @@ end
 """
 ModelArray()
 
-    function creating the "Main.model_container".
-    Calling sequence (once by the create_model function)
+function creating the "Main.model_container".
+
+Calling sequence (once by the create_model function)
 
     global model_container = ModelArray(name::String)
 

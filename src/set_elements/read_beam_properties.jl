@@ -1,3 +1,6 @@
+"""
+    read_beam_properties
+"""
 function read_beam_properties(JSON_file::String,name::String)
 
   open(JSON_file,"r") do f

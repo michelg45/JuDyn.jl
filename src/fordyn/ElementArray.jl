@@ -1,14 +1,7 @@
 """
     ElementArray
 
-        ElementArray is a data structure that contains the general data associated to elements. 
-        It is defined in the SetElements module.
-
-        the "Main.element_container" is created by the "create_model.jl" function.
-
-        calling sequence:
-            
-            global element_container = ElementArray()
+Data structure that contains the general data associated to elements. 
 
         It contains the following data fields:
             element_numbers::Vector{Int}            numbering of elements
@@ -53,9 +46,12 @@ end
 """
     ElementArray()
 
-    function creating an array of ElementArray type.
+Function creating an array of ElementArray type.
 
-        global element_container = ElementArray()
+Calling sequence (once by the `create_model` function):
+            
+    global element_container = ElementArray()
+
         
 """
     ElementArray()=ElementArray(Vector{Int}[],Array{String,1}[],Array{Vector{Int},1}[],Vector{Int}[],Vector{Int}[],Vector{Int}[],Vector{Int}[],Array{Vector{Int},1}[],Array{Vector{Int},1}[],Array{Vector{Int},1}[],Array{Vector{Int},1}[],Array{Vector{Int},1}[],Array{Vector{Int},1}[],Array{Vector{Int},1}[],Array{Vector{Int},1}[])

@@ -37,11 +37,13 @@ function dynamic_element_forces(Nel::Int64, element_numbers::Vector{Int},
             ext_work_el = node_force(nbr,Dy,res,p,itime,h)
             global ext_work += ext_work_el
         elseif el_type == "ground_hinge"
-            ext_work_el = ground_hinge_force(nbr,Dy,y_n,res,p,niter,itime,h)
+            str_el, ext_work_el = ground_hinge_force(nbr,Dy,y_n,ydot_np1,res,p,niter,itime,h)
             global ext_work += ext_work_el
+            str_energy += str_el
         elseif el_type == "hinge"
-            ext_work_el = hinge_force(nbr,Dy,y_n,res,p,niter,itime,h)
+            str_el, ext_work_el = hinge_force(nbr,Dy,y_n,ydot_np1,res,p,niter,itime,h)
             global ext_work += ext_work_el
+            str_energy += str_el
         elseif el_type == "shell"
             kin_el, str_el, pot_el = shell_force(nbr,y_n,Dy,ydot_np1,res,p,itime,niter,h)
             str_energy += str_el
@@ -70,7 +72,10 @@ function dynamic_element_forces(Nel::Int64, element_numbers::Vector{Int},
                 kin_energy += kin_el
                 str_energy += str_el
                 pot_energy += pot_el
-
+        elseif el_type == "prismatic_joint"    
+                str_el, ext_work_el = prismatic_joint_force(nbr,Dy,y_n,ydot_np1,res,p,itime,h)
+                ext_work += ext_work_el
+                str_energy += str_el
                        
 """        elseif el_type == "ground_spherical_joint"   
             ground_spherical_joint_force(nbr,Dy,res)
