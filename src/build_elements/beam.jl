@@ -135,7 +135,8 @@ end
     DW_2 = Dtang(psidot_2,Dpsi_2)
    
     # 
-    phi = RV3(-RV3(psi_1,-psi_rel[1]),RV3(psi_2,-psi_rel[2]))
+    # phi = RV3(-RV3(psi_1,-psi_rel[1]),RV3(psi_2,-psi_rel[2]))
+    phi = RV3(-RV3(psi_1,psi_rel[1]),RV3(psi_2,psi_rel[2]))
     u = rot(-psi_1, x_2-x_1)
     tdu = tilde(u)
     u = rot(-psi_rel[1],u)

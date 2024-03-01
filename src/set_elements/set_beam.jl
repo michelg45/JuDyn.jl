@@ -84,11 +84,11 @@ function set_beam(nbr::Int,nodes::Vector{Int},stiffness_properties::Vector{Float
     x_2=copy(nc.init_positions[nodes[2]])
 
     ref_orientation = frame_on_line(x_1,x_2)
+    println(ref_orientation)
 
     constant_inertia = false
 
-    set_beam(nbr,nodes,ref_orientation,stiffness_properties,
-    mass_properties,constant_inertia)
+    set_beam(nbr,nodes,ref_orientation,stiffness_properties,mass_properties,constant_inertia)
     
     return
 end
@@ -145,8 +145,11 @@ function set_beam(nbr::Int,nodes::Vector{Int},ref_orientation::RV3,stiffness_pro
         error(" beam element ", nbr, "  reference frame not aligned on beam axis")
     end
     psi_rel = Vector{RV3}(undef,2)
-    psi_rel[1]=RV3(-ref_orientation, nc.init_orientations[n1])
-    psi_rel[2]=RV3(-ref_orientation,nc.init_orientations[n2])
+#    psi_rel[1]=RV3(-ref_orientation, nc.init_orientations[n1])
+#    psi_rel[2]=RV3(-ref_orientation,nc.init_orientations[n2])
+
+    psi_rel[1]=RV3(-nc.init_orientations[n1],ref_orientation)
+    psi_rel[2]=RV3(-nc.init_orientations[n2],ref_orientation)
 
     push!(bc.node_orders,[n1,n2])
     push!(bc.length,norm((x_2-x_1).v))
