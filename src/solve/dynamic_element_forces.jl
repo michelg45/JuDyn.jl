@@ -31,6 +31,8 @@ function dynamic_element_forces(Nel::Int64, element_numbers::Vector{Int},
             pot_energy += pot_el
         elseif el_type == "frame_link"
             frame_link_force(nbr,Dy,res)
+        elseif el_type == "spherical_joint"
+            spherical_joint_force(nbr,Dy,res)
         elseif el_type == "node_link"
             node_link_force(nbr,Dy,res)
         elseif el_type == "node_force"

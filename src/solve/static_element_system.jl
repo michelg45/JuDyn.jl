@@ -27,6 +27,8 @@ function static_element_system(Nel::Int64, element_numbers::Vector{Int},element_
             pot_energy += pot_el
         elseif el_type == "frame_link"
             frame_link(nbr,Dy,res,matrix)
+        elseif el_type == "spherical_joint"
+            spherical_joint(nbr,Dy,res,matrix)
         elseif el_type == "node_link"
             node_link(nbr,Dy,res,matrix)
         elseif el_type == "node_force"

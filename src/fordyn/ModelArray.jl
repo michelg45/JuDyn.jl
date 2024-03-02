@@ -21,6 +21,7 @@ mutable struct ModelArray
     Ground_hinges::Int
     Hinges::Int
     Prismatic_joints::Int
+    Spherical_joints::Int
     Beams::Int
     Shells::Int
     SuperBeams::Int
@@ -78,6 +79,7 @@ function ModelArray(Name)
         Ground_hinges = 0
         Hinges = 0
         Prismatic_joints = 0
+        Spherical_joints = 0
         Beams=0
         Shells=0
         SuperBeams=0
@@ -113,7 +115,7 @@ function ModelArray(Name)
         return new(Name,Nodes,Elements,Nodal_forces,Nodal_torques,Nodal_imposed_displacements,
                    SuperElements,Rigid_bodies,Rigid_masses,
                    Node_links,Frame_links,Frame_springs,Ground_hinges,
-                   Hinges,Prismatic_joints,Beams,Shells,SuperBeams,Ground_spring_dampers,Inequalities,Linear_constraints,Ndofs,Ndofs_x,Ndofs_int,Ndofs_q,
+                   Hinges,Prismatic_joints,Spherical_joints,Beams,Shells,SuperBeams,Ground_spring_dampers,Inequalities,Linear_constraints,Ndofs,Ndofs_x,Ndofs_int,Ndofs_q,
                    Ndofs_v,Ndofs_mult,max_x,max_int,max_v,max_mult,
                    end_of_nodes,end_of_elements,end_of_assembly,
                    end_of_initial_conditions,struc_loc_q,struc_loc_v,modified_locs,initial_shape,gravity,

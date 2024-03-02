@@ -56,6 +56,9 @@ function eig_solve(y::Vector{Float64},Dy::Vector{Float64},ydot::Vector{Float64},
         elseif el_type == "frame_link"
              inv_loc, S_el = frame_link(nbr,Dy,res,matrix)
              A[inv_loc,inv_loc] += S_el
+        elseif el_type == "spherical_joint"
+            inv_loc, S_el = spherical_joint(nbr,Dy,res,matrix)
+             A[inv_loc,inv_loc] += S_el
         elseif el_type == "hinge"   
              inv_loc, S_el = hinge(nbr,Dy,y_n,ydot_np1,res,p,alpha_stiff,theta_p,matrix,niter,itime,h)
              A[inv_loc,inv_loc] += S_el

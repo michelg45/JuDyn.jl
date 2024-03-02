@@ -12,6 +12,8 @@ Function which
 Calling squence: 
 ````{verbatin}
         set_frame_link(nbr,node1,node2)
+
+        set_frame_link(nbr,node1,node2,k)
 ````
     
 Input:
@@ -20,6 +22,7 @@ Input:
 |:--------------|:---------------------------------------------|
 | `nbr` | element number |
 | `node1, node2` | nodes connected by the frame link element. |
+| ``k`` | constraint scaling factor. |
 
 """
 function set_frame_link(nbr::Int,node1::Int,node2::Int,scale_factor::Float64)

@@ -58,6 +58,7 @@ include("build_elements/ground_hinge.jl")
 
 include("build_elements/hinge.jl")
 include("build_elements/prismatic_joint.jl")
+include("build_elements/spherical_joint.jl")
 
 include("build_elements/ground_spring_damper.jl")
 
@@ -93,6 +94,7 @@ export ground_hinge_force
 export hinge
 export hinge_force
 export prismatic_joint,prismatic_joint_force
+export spherical_joint,spherical_joint_force
 export beam
 export beam_force
 export shell

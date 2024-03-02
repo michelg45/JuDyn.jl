@@ -1,6 +1,11 @@
 """
-    diagonal(x)
+    diagonal
 
-Returns a diagonal matrix with the entries of the vector `x` on its diagonal. 
+Returns a diagonal matrix with the entries of the vector `x::Vector{Float64}` on its diagonal. 
+
+Calling sequence:
+
+    d = diagonal(x)
+
 """
-diagonal(x) = diagm(0 => x)
+diagonal(x::Vector{Float64}) = diagm(0 => x)

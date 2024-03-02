@@ -24,5 +24,6 @@ Adj
 shape_functions_1D
 shape_functions_2D
 gauss_points
+diagonal
 frame_on_line
 ```

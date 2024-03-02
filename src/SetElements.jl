@@ -67,6 +67,9 @@ include(dir*"NodalTorqueArray.jl")
 include(dir*"set_prismatic_joint.jl")
 include(dir*"PrismaticJointArray.jl")
 
+include(dir*"set_spherical_joint.jl")
+include(dir*"SphericalJointArray.jl")
+
 include(dir*"set_frame_spring.jl")
 include(dir*"FrameSpringArray.jl")
 
@@ -127,6 +130,7 @@ export set_hinge
 export set_inequality
 export set_ground_spring_damper
 export set_prismatic_joint
+export set_spherical_joint
 export set_shell
 export set_linear_constraint
 export shell_stiffness_matrix

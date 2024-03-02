@@ -12,6 +12,7 @@
 | [`set_node_link`](@ref) | [`NodeLinkArray`](@ref) |
 | [`set_node_torque`](@ref) | [`NodalTorqueArray`](@ref) |
 | [`set_prismatic_joint`](@ref) | [`PrismaticJointArray`](@ref) |
+| [`set_spherical_joint`](@ref) | [`SphericalJointArray`](@ref) |
 | [`set_rigid_body`](@ref) | [`RigidBodyArray`](@ref) |
 | [`set_rigid_mass`](@ref) | [`RigidMassArray`](@ref) |
 | [`set_shell`](@ref) | [`ShellArray`](@ref) |
@@ -34,6 +35,7 @@ NodalForceArray
 NodeLinkArray
 NodalTorqueArray
 PrismaticJointArray
+SphericalJointArray
 RigidBodyArray
 RigidMassArray
 ShellArray
@@ -56,6 +58,7 @@ set_node_force
 set_node_link
 set_node_torque
 set_prismatic_joint
+set_spherical_joint
 set_rigid_body
 set_rigid_mass
 set_shell
