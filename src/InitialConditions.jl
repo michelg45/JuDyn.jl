@@ -20,6 +20,7 @@ include(dir*"set_initial_displacement.jl")
 include(dir*"get_initial_displacements.jl")
 include(dir*"set_initial_velocity.jl")
 include(dir*"end_initial_conditions.jl")
+include(dir*"read_element_initial_conditions.jl")
 include(dir*"print_initial_configuration.jl")
 
 export initial_conditions
@@ -29,6 +30,7 @@ export get_initial_displacements
 export set_initial_velocity
 export end_initial_conditions
 export print_initial_configuration
+export read_element_initial_conditions
 
 
 end # module

@@ -2,7 +2,7 @@
     FrameLinkArray
 
    
-Data structure for `frame_link` element
+Data structure for the  `frame_link_container` data set.  It contains the following data for each element of the data set:
         
 |                                   |                                              |    
 |:----------------------------------|:---------------------------------------------| 
@@ -13,10 +13,10 @@ Data structure for `frame_link` element
 | scale_factor::Vector{Float64} | scaling factors of the constraints |
 
 
-Calling squence: 
+Creation sequence: 
 
 ````{verbatin}
-        set_frame_link(nbr,node1,node2)
+        global frame_link_container = FrameLinkArray()
 ````
 """
 mutable struct FrameLinkArray

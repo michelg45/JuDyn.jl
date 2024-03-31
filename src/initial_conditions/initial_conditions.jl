@@ -83,7 +83,4 @@ function  initial_conditions(init_file::String,sol_type::String)
     mc.initial_shape = true
     mc.init_file = init_file
 
-
-
-
 end

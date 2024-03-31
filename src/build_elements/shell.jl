@@ -98,15 +98,15 @@ function shell(nbr::Int,y::Vector{Float64},Dy::Vector{Float64},ydot::Vector{Floa
     if visco_type == "maxwell"
         time_constants = sc.time_constants[iel]
         ratio_infty = sc.ratio_infty[iel]
-        if itime  > 1
+#        if itime  > 1
             Gamma_2 = broadcast(x -> h/x/2.0*exp(-h/2.0/x), time_constants)
             Gamma_1 = broadcast(x -> exp(-h/x), time_constants)
             # Gamma_1 = broadcast(x -> (2.0*x/h-1.0)/(1.0+2.0*x/h), time_constants)
             # Gamma_2 =  broadcast(x -> 1.0/(1.0+2.0*x/h), time_constants)
-        else
-            Gamma_1 = zeros(12)
-            Gamma_2 = zeros(12)
-        end
+#        else
+#            Gamma_1 = zeros(12)
+#            Gamma_2 = zeros(12)
+#        end
         if niter == 1 
             for ig = 1:ngauss_points
                 sc.strains_g[iel][ig][:,1] = sc.strains_g[iel][ig][:,2]

@@ -1,6 +1,5 @@
 """
-SphericalJointArray
-
+    SphericalJointArray
    
 Data structure for `spherical_joint` element
         

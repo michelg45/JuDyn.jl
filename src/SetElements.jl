@@ -105,6 +105,7 @@ export NodalForceArray
 export NodalTorqueArray
 export NodalDispArray
 export PrismaticJointArray
+export SphericalJointArray
 export BeamArray
 export ShellArray
 export LinConstrArray

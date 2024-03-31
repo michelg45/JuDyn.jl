@@ -5,7 +5,7 @@
 Function which 
 
 * defines the topology of a spherical connection between nodes 'node1' and 'node2'.
-* Defines a set of 6 Lagrange multipliers to express the connection.
+* Defines a set of 3 Lagrange multipliers to express the connection.
 * Stores the relative positions  of the connection node into the element entry `SetElements.spherical_joint_container[iel]`. 
 
 Calling squences: 

@@ -52,6 +52,7 @@ mutable struct ModelArray
     matrix_update::Bool
     eigvals::Bool
     init_file::String
+    visco::Bool
 
 
 """
@@ -110,6 +111,7 @@ function ModelArray(Name)
         matrix_update = true
         eigvals = false
         init_file = ""
+        visco = false
         
         
         return new(Name,Nodes,Elements,Nodal_forces,Nodal_torques,Nodal_imposed_displacements,
@@ -119,7 +121,7 @@ function ModelArray(Name)
                    Ndofs_v,Ndofs_mult,max_x,max_int,max_v,max_mult,
                    end_of_nodes,end_of_elements,end_of_assembly,
                    end_of_initial_conditions,struc_loc_q,struc_loc_v,modified_locs,initial_shape,gravity,
-                   uniform_rotation,rotation_speed,matrix_update,eigvals,init_file)
+                   uniform_rotation,rotation_speed,matrix_update,eigvals,init_file,visco)
 
     end
 

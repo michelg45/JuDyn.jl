@@ -89,6 +89,8 @@ end
     mc = Main.model_container
     nc = Main.node_container
 
+    (visco_type != "none" && mc.visco == false) && (mc.visco = true) 
+
     if mc.Shells == 0
          global shell_container = ShellArray()
     else

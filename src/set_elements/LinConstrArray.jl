@@ -1,7 +1,22 @@
 """
-LinConstrArray
+    LinConstrArray
 
-        data structure defining a container for linear constraints
+Data structure for the  `lin_constr_container` data set.  It contains the following data for each element of the data set:
+
+|                                   |                                              |    
+|:--------------------------------------|:---------------------------------------------| 
+| numbers::Vector{Int} | elemnt numbers |
+| node_orders::Array{Vector{Int},1} | positions of node frames in "node_container" .| 
+| components::Vector{Vector{Int}}| components involved in the linear constraint.| 
+| dofs::Vector{Vector{Int}} | degrees of freedom of the constraints. |
+| coefs::Vector{Vector{Float64}} | coefficients of the constraint. |
+| scale_factor::Vector{Float64} | constraint scaling factors |
+                
+Creation sequence:
+                
+````{verbatin}
+    global lin_constr_container =  LinConstrArray()
+````
 
 """
 mutable struct LinConstrArray

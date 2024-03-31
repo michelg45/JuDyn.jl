@@ -12,7 +12,7 @@
 | [`set_node_link`](@ref) | [`NodeLinkArray`](@ref) |
 | [`set_node_torque`](@ref) | [`NodalTorqueArray`](@ref) |
 | [`set_prismatic_joint`](@ref) | [`PrismaticJointArray`](@ref) |
-| [`set_spherical_joint`](@ref) | [`SphericalJointArray`](@ref) |
+| [`set_spherical_joint`](@ref) | [`SphericalJointArray`](@ref)|
 | [`set_rigid_body`](@ref) | [`RigidBodyArray`](@ref) |
 | [`set_rigid_mass`](@ref) | [`RigidMassArray`](@ref) |
 | [`set_shell`](@ref) | [`ShellArray`](@ref) |
