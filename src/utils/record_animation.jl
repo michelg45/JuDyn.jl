@@ -66,4 +66,5 @@ function record_animation(node_positions::Array{Float64,3},triangles::Array{Int,
     t= (i-1)*hfin
     shape[] = shape_interpol(node_positions,t,T,Npas)
     end
+
 end
