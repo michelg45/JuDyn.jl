@@ -11,7 +11,7 @@ module JuDyn
 
 using Revise
 using Reexport
-using JLD
+using JLD2
 using JSON
 
 include("MyAlgebra.jl")
