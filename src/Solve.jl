@@ -46,6 +46,7 @@ include(dir*"static_constrained_solve.jl")
 include(dir*"static_element_forces.jl")
 include(dir*"static_element_system.jl")
 include(dir*"static_solve.jl")
+include(dir*"variable_time_step.jl")
 # 
 
 export solve
@@ -67,6 +68,7 @@ export static_constrained_solve
 export static_element_forces
 export static_element_system
 export static_solve
+export variable_time_step
 
 
 end # module

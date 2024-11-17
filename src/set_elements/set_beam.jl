@@ -17,7 +17,7 @@
 
         visco_type::String                      "none", "visco_QS" or "visco_dyn"
         ratio_infty::Int                        fraction of elastic stiffness at infinity 
-        tau_b::Float64                          viscoeleastic time constant in bending 
+        tau_E::Float64                          viscoeleastic time constant in bending 
         tau_S::Float64                          viscoeleastic time constant in shear
 
 
@@ -36,12 +36,12 @@
         for a viscoelastic beam:
 
             set_beam(nbr,nodes,ref_orientation,stiffness_properties,
-            mass_properties,constant_inertia,tau_B,tau_S, ratio_infty, visco_type)
+            mass_properties,constant_inertia,tau_E,tau_S, ratio_infty, visco_type)
 
             or 
 
             set_beam(nbr,nodes,ref_orientation,stiffness_properties,
-            mass_properties,tau_B,tau_S, ratio_infty, visco_type)
+            mass_properties,tau_E,tau_S, ratio_infty, visco_type)
 
 
             if visco_type = "visco_QS", the viscoelastic stress will be computed in a quasi-static manner.
@@ -54,23 +54,23 @@ function set_beam(nbr::Int,nodes::Vector{Int},ref_orientation::RV3,stiffness_pro
 
     visco_type = "none"
     ratio_infty = 1.0
-    tau_B = 0.0
+    tau_E = 0.0
     tau_S = 0.0
 
     set_beam(nbr,nodes,ref_orientation,stiffness_properties,
-    mass_properties,constant_inertia,tau_B,tau_S, ratio_infty, visco_type)
+    mass_properties,constant_inertia,tau_E,tau_S, ratio_infty, visco_type)
     
     return
 end
 
 function set_beam(nbr::Int,nodes::Vector{Int},ref_orientation::RV3,stiffness_properties::Vector{Float64},
-    mass_properties::Vector{Float64},constant_inertia::Bool,tau_B::Float64,tau_S::Float64)
+    mass_properties::Vector{Float64},constant_inertia::Bool,tau_E::Float64,tau_S::Float64)
 
     visco_type = "damped"
     ratio_infty = 1.0
 
     set_beam(nbr,nodes,ref_orientation,stiffness_properties,
-    mass_properties,constant_inertia,tau_B,tau_S, ratio_infty, visco_type)
+    mass_properties,constant_inertia,tau_E,tau_S, ratio_infty, visco_type)
     
     return
 end
@@ -95,7 +95,7 @@ end
 
 
 function set_beam(nbr::Int,nodes::Vector{Int},ref_orientation::RV3,stiffness_properties::Vector{Float64},
-        mass_properties::Vector{Float64},constant_inertia::Bool, tau_B::Float64, tau_S::Float64, ratio_infty::Float64, visco_type::String)
+        mass_properties::Vector{Float64},constant_inertia::Bool, tau_E::Vector{Float64}, tau_S::Vector{Float64}, ratio_infty::Vector{Float64}, visco_type::String)
 
 
     mc = Main.model_container
@@ -117,16 +117,20 @@ function set_beam(nbr::Int,nodes::Vector{Int},ref_orientation::RV3,stiffness_pro
     append!(bc.numbers,nbr)
     push!(bc.visco_type,visco_type)
 
-    time_constants = zeros(6)
-
     if visco_type != "none" 
         
-        nu = 0.3 
-        tau_shear = tau_S
-        tau_ext = 1.0/3.0*((1-2.0*nu)*tau_B + 2.0*(1.0+nu)*tau_S)
-        time_constants[1] = tau_ext
-        time_constants[5:6] .= tau_ext
-        time_constants[2:4] .= tau_shear 
+        n_branches = size(tau_E,1)
+        
+        time_constants = Vector{Any}(undef,n_branches)
+        visco_strains =  Vector{Any}(undef,n_branches)
+
+        for nb = 1:n_branches  
+            time_constants[nb] = zeros(6)
+            visco_strains[nb] = zeros(6,2)
+            time_constants[nb][1] = tau_E[nb]
+            time_constants[nb][5:6] .= tau_E[nb]
+            time_constants[nb][2:4] .= tau_S[nb]
+        end 
          
     end
 
@@ -161,7 +165,7 @@ function set_beam(nbr::Int,nodes::Vector{Int},ref_orientation::RV3,stiffness_pro
     push!(bc.visco_type,visco_type)
     push!(bc.time_constants,time_constants)
     push!(bc.strains,zeros(6,2))
-    push!(bc.visco_strains,zeros(6,2))
+    push!(bc.visco_strains,visco_strains)
     push!(bc.ratio_infty,ratio_infty)
     
 
@@ -193,8 +197,8 @@ function set_beam(nbr::Int,nodes::Vector{Int},ref_orientation::RV3,stiffness_pro
 end
 
 function set_beam(nbr::Int,nodes::Vector{Int},ref_orientation::RV3,stiffness_properties::Vector{Float64},
-    mass_properties::Vector{Float64},tau_B::Float64, tau_S::Float64, ratio_infty::Float64, visco_type::String)
+    mass_properties::Vector{Float64},tau_E::Vector{Float64}, tau_S::Vector{Float64}, ratio_infty::Vector{Float64}, visco_type::String)
     constant_inertia = false
     set_beam(nbr,nodes,ref_orientation,stiffness_properties,
-    mass_properties,constant_inertia,tau_B,tau_S,ratio_infty,visco_type)
+    mass_properties,constant_inertia,tau_E,tau_S,ratio_infty,visco_type)
 end

@@ -1,13 +1,26 @@
 """
     NodeFrame
 
-    NodeFframe is a structural type to describe a nodal frame. Its translation part is descrived by a ::Vec3 type
-    and is rotation part by a ::RV3 type.
+        NodeFrame is a structural type to describe a nodal frame. 
+        Its translation part is described by a vector p::Vec3 and
+        is rotation part by a rotation vector p::RV3.
 
         mutable struct NodeFrame
             x::Vec3
             p::RV3
         end
+
+```@example
+
+        a1 = Vec3(0.0,1.0,0.0)
+        Vec3([0.000000e+00, 1.000000e+00, 0.000000e+00])
+        phi1 = RV3(0.0, 2.0, -1.0)
+        RV3([0.000000e+00, 2.000000e+00, -1.000000e+00])
+        H1 = NodeFrame(a1,phi1)
+        NodeFrame(Vec3([0.000000e+00, 1.000000e+00, 0.000000e+00]), 
+        RV3([0.000000e+00, 2.000000e+00, -1.000000e+00]))
+
+```
 
 """
 mutable struct NodeFrame

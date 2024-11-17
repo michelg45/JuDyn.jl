@@ -79,6 +79,7 @@ function shell(nbr::Int,y::Vector{Float64},Dy::Vector{Float64},ydot::Vector{Floa
     global f_iner  = zeros(N_depl)
     global w  = zeros(N_depl)
     global str_el = 0.0
+    global strains = zeros(12)
     global stresses = zeros(12)
 
     visco_type = sc.visco_type[iel]
@@ -95,27 +96,43 @@ function shell(nbr::Int,y::Vector{Float64},Dy::Vector{Float64},ydot::Vector{Floa
     J = sc.gauss_jacobians[iel]
     wg = sc.gauss_weights[iel]
 
+   
+
     if visco_type == "maxwell"
         time_constants = sc.time_constants[iel]
         ratio_infty = sc.ratio_infty[iel]
-#        if itime  > 1
-            Gamma_2 = broadcast(x -> h/x/2.0*exp(-h/2.0/x), time_constants)
-            Gamma_1 = broadcast(x -> exp(-h/x), time_constants)
-            # Gamma_1 = broadcast(x -> (2.0*x/h-1.0)/(1.0+2.0*x/h), time_constants)
-            # Gamma_2 =  broadcast(x -> 1.0/(1.0+2.0*x/h), time_constants)
-#        else
-#            Gamma_1 = zeros(12)
-#            Gamma_2 = zeros(12)
-#        end
-        if niter == 1 
-            for ig = 1:ngauss_points
-                sc.strains_g[iel][ig][:,1] = sc.strains_g[iel][ig][:,2]
-                sc.visco_strains_g[iel][ig][:,1] = sc.visco_strains_g[iel][ig][:,2]
+        visco_strains = sc.visco_strains_g[iel]
+        strains_g = sc.strains_g[iel]
+
+        n_branches = size(time_constants,1)
+        Gamma_1 = Vector{Any}(undef,n_branches)
+        Gamma_2 = Vector{Any}(undef,n_branches)
+        K_b = Vector{Any}(undef,n_branches)
+
+        for i = 1:n_branches
+            K_b[i] = (1.0 - ratio_infty[i])*K
+            tau_m = sum(time_constants[i][1:5]+time_constants[i][7:11])/10
+            if (tau_m/h > 1)
+                Gamma_2[i] = broadcast(x -> h/x/2.0*exp(-h/2.0/x), time_constants[i])
+                Gamma_1[i] = broadcast(x -> exp(-h/x), time_constants[i])
+            else
+                Gamma_2[i] = 0.5*ones(12)
+                Gamma_1[i] = zeros(12)
+            end
+            if niter == 1
+                for i = 1:ngauss_points
+                    for j = 1:n_branches
+                        visco_strains[i][j][:,1] = visco_strains[i][j][:,2]
+                    end
+                end
+            end    
+        end
+        if niter == 1
+            for i = 1:ngauss_points
+                strains_g[i][:,1] = strains_g[i][:,2]
             end
         end
     end
-
-
 
     global penalty  = 0.0
     global psi_12 = zeros(12)
@@ -191,7 +208,6 @@ function shell(nbr::Int,y::Vector{Float64},Dy::Vector{Float64},ydot::Vector{Floa
 
     end
 
-    strains = zeros(12)
 
     if visco_type == "maxwell"
 
@@ -199,13 +215,21 @@ function shell(nbr::Int,y::Vector{Float64},Dy::Vector{Float64},ydot::Vector{Floa
 
             f_g, QN = frame_solve(H, F[ing], DF[ing], J[ing], Nnodes)
             eps_g = reshape((f_g - f_0g[ing]),(12,1))
-            sc.visco_strains_g[iel][ing][:,2] = Gamma_2 .* (eps_g + sc.strains_g[iel][ing][:,1]) + Gamma_1 .* sc.visco_strains_g[iel][ing][:,1] 
             strains += eps_g*wg[ing]
-            sc.strains_g[iel][ing][:,2] = eps_g*wg[ing]
-            d_stress = K[ing]*eps_g - (1.0 - ratio_infty) *K[ing]*sc.visco_strains_g[iel][ing][:,2]
+            strains_g[ing][:,2] = eps_g*wg[ing]
+            tangent_stiffness  += transpose(QN)*(K[ing] + penalty*psi_12*psi_12')*QN
+            d_stress = K[ing]*eps_g
+
+
+            for nb = 1:n_branches
+                coef = (1.0 -ratio_infty[nb])
+                visco_strains[ing][nb][:,2] = Gamma_2[nb] .* (strains_g[ing][:,2] + strains_g[ing][:,1]) + Gamma_1[nb] .* visco_strains[ing][nb][:,1] 
+                d_stress -= coef*K[ing]*visco_strains[ing][nb][:,2]
+                tangent_stiffness   -= coef * transpose(QN)*diagm(Gamma_2[nb])* (K[ing]*QN)
+            end
+
             stresses += d_stress
             f_int  += transpose(QN)*(d_stress + penalty*psi_12*psi_12'*eps_g)
-            tangent_stiffness  += transpose(QN)*(K[ing] -(1.0 -ratio_infty) * Gamma_2 .* K[ing]  + penalty*psi_12*psi_12')*QN
         end
 
     else
@@ -223,10 +247,14 @@ function shell(nbr::Int,y::Vector{Float64},Dy::Vector{Float64},ydot::Vector{Floa
         end
 
     end
-     
-    sc.stresses[iel][:] = stresses/sc.area[iel]
+    sc.stresses[iel] = stresses/sc.area[iel]
     sc.strains[iel][:,2] = strains
-
+"""    iel == 1 && println("stresses ", stresses) 
+    iel == 1 && println("sc.stresses[iel] ", sc.stresses[iel]) 
+    iel == 1 && println("strains ", strains) 
+    iel == 1 && println("sc.strains[iel] ", sc.strains[iel][:,2]) 
+    iel == 1 && println("visco_strains[1][1] ", visco_strains[1][1]) 
+    iel == 1 && println("sc.visco_strains_g[iel][1][1] ",sc.visco_strains_g[iel][1][1]) """
 
     tangent_stiffness = S_l'*tangent_stiffness*S_r
 
@@ -378,6 +406,7 @@ function shell_force(nbr::Int,y::Vector{Float64},Dy::Vector{Float64},ydot::Vecto
     global f_iner  = zeros(N_depl)
     global w  = zeros(N_depl)
     global str_el = 0.0
+    global strains = zeros(12)
     global stresses = zeros(12)
 
     ngauss_points = sc.ngauss_points[iel]
@@ -394,14 +423,36 @@ function shell_force(nbr::Int,y::Vector{Float64},Dy::Vector{Float64},ydot::Vecto
     if visco_type == "maxwell"
         time_constants = sc.time_constants[iel]
         ratio_infty = sc.ratio_infty[iel]
-        if itime  > 1
-            Gamma_2 = broadcast(x -> h/x/2.0*exp(-h/2.0/x), time_constants)
-            Gamma_1 = broadcast(x -> exp(-h/x), time_constants)
-            # Gamma_1 = broadcast(x -> (2.0*x/h-1.0)/(1.0+2.0*x/h), time_constants)
-            # Gamma_2 =  broadcast(x -> 1.0/(1.0+2.0*x/h), time_constants)
-        else
-            Gamma_1 = zeros(12)
-            Gamma_2 = zeros(12)
+        visco_strains = sc.visco_strains_g[iel]
+        strains_g = sc.strains_g[iel]
+
+        n_branches = size(time_constants,1)
+        Gamma_1 = Vector{Any}(undef,n_branches)
+        Gamma_2 = Vector{Any}(undef,n_branches)
+        K_b = Vector{Any}(undef,n_branches)
+
+        for i = 1:n_branches
+            K_b[i] = (1.0 - ratio_infty[i])*K
+            tau_m = sum(time_constants[i][1:5]+time_constants[i][7:11])/10
+            if (tau_m/h > 1)
+                Gamma_2[i] = broadcast(x -> h/x/2.0*exp(-h/2.0/x), time_constants[i])
+                Gamma_1[i] = broadcast(x -> exp(-h/x), time_constants[i])
+            else
+                Gamma_2[i] = 0.5*ones(12)
+                Gamma_1[i] = zeros(12)
+            end
+            if niter == 1
+                for i = 1:ngauss_points
+                    for j = 1:n_branches
+                        visco_strains[i][j][:,1] = visco_strains[i][j][:,2]
+                    end
+                end
+            end    
+        end
+        if niter == 1
+            for i = 1:ngauss_points
+                strains_g[i][:,1] = strains_g[i][:,2]
+            end
         end
     end
 
@@ -459,7 +510,7 @@ function shell_force(nbr::Int,y::Vector{Float64},Dy::Vector{Float64},ydot::Vecto
 
     end
 
-    strains = zeros(12)
+
 
     if visco_type == "maxwell"
 
@@ -467,13 +518,19 @@ function shell_force(nbr::Int,y::Vector{Float64},Dy::Vector{Float64},ydot::Vecto
 
             f_g, QN = frame_solve(H, F[ing], DF[ing], J[ing], Nnodes)
             eps_g = reshape((f_g - f_0g[ing]),(12,1))
-            sc.visco_strains_g[iel][ing][:,2] = Gamma_2 .* (eps_g + sc.strains_g[iel][ing][:,1]) + Gamma_1 .* sc.visco_strains_g[iel][ing][:,1] 
             strains += eps_g*wg[ing]
-            d_stress = K[ing]*eps_g - (1.0 - ratio_infty) *K[ing]*sc.visco_strains_g[iel][ing][:,2]
-            stresses += d_stress
-            str_el += 0.5*(transpose(eps_g)*d_stress)[1]
-            f_int  += transpose(QN)*(d_stress + penalty*psi_12*psi_12'*eps_g)
+            strains_g[ing][:,2] = eps_g*wg[ing]
+            d_stress = K[ing]*eps_g
 
+
+            for nb = 1:n_branches
+                coef = (1.0 -ratio_infty[nb])
+                visco_strains[ing][nb][:,2] = Gamma_2[nb] .* (strains_g[ing][:,2] + strains_g[ing][:,1]) + Gamma_1[nb] .* visco_strains[ing][nb][:,1] 
+                d_stress -= coef*K[ing]*visco_strains[ing][nb][:,2]
+            end
+
+            stresses += d_stress
+            f_int  += transpose(QN)*(d_stress + penalty*psi_12*psi_12'*eps_g)
         end
     else
 

@@ -1,7 +1,7 @@
 """
     element_constraints 
 """
-function element_constraints(Ndim::Int64 ,Nel::Int64, Nbounds::Int64,bounds::Vector{Float64},y_n::Vector{Float64},Dy::Vector{Float64},itime::Int,h::Float64)
+function element_constraints(Ndim::Int64 ,Nel::Int64, Nbounds::Int64,bounds::Vector{Float64},y_n::Vector{Float64},Dy::Vector{Float64},tim::Float64)
 
     ec =  Main.element_container
     inc = Main.SetElements.inequality_container
@@ -21,7 +21,7 @@ function element_constraints(Ndim::Int64 ,Nel::Int64, Nbounds::Int64,bounds::Vec
             loc_x = ec.inv_loc_x[iel]
             iel2 = findfirst(x -> x == nbr, inc.number)[1]
             time_function = input_functions[inc.time_function[iel2]]
-            bounds[ibound] = time_function(itime,h,inc.bound_params[iel2])
+            bounds[ibound] = time_function(tim,inc.bound_params[iel2])
             type = inc.type[iel2]
             if type == "linear"
                 B[loc_x,ibound]= inc.direction[iel2].v

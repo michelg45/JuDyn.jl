@@ -33,13 +33,13 @@ mutable struct BeamArray
     local_node_orientations::Array{Vector{RV3},1}
     length::Vector{Float64}
     stiffness_properties::Array{Vector{Float64},1}
-    time_constants::Array{Vector{Float64},1}
-    ratio_infty::Vector{Float64}
+    time_constants::Vector{Any}
+    ratio_infty::Vector{Any}
     mass_properties::Array{Vector{Float64},1}
     constant_inertia::Vector{Bool}
-    stresses::Vector{Vector{Float64}}
-    visco_strains::Vector{Array{Float64,2}}
-    strains::Vector{Array{Float64,2}}
+    stresses::Vector{Any}
+    visco_strains::Vector{Any}
+    strains::Vector{Any}
     visco_type::Vector{String}
 
     function BeamArray()

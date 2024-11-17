@@ -45,8 +45,7 @@ mutable struct ShellArray
     ngauss_points::Vector{Int}
     node_orders::Vector{Vector{Int}}
     stiffness_properties::Vector{Vector{Float64}}
-    time_constants::Array{Vector{Float64},1}
-    ratio_infty::Vector{Float64}
+    ratio_infty::Vector{Any}
     mass_properties::Vector{Vector{Float64}}
     thickness::Vector{Float64}
     area::Vector{Float64}
@@ -64,10 +63,11 @@ mutable struct ShellArray
     stiffness_matrix::Vector{Vector{Matrix}}
     mass_kernel::Vector{Matrix}
     mass_matrix::Vector{Matrix}
-    stresses::Vector{Vector{Float64}}
-    visco_strains_g::Vector{Vector{Matrix}}
-    strains::Vector{Array{Float64,2}}
-    strains_g::Vector{Vector{Matrix}}
+    stresses::Vector{Any}
+    time_constants::Vector{Any}
+    visco_strains_g::Vector{Vector{Any}}
+    strains::Vector{Any}
+    strains_g::Vector{Vector{Any}}
     visco_type::Vector{String}
 
 

@@ -11,7 +11,7 @@ The *FORDYN* module creates the 3 main data containers used throuhout the execut
 
 * _element__container_, a data container  of _ElementArray_ type and   containing the data  of element set. The list of entries in the _element__container_ can be read from the source code of `ElementArray.jl`. 
 
-These arrays being _global_, they can be consulted after the execution of the *JUDyn*  module as showh in the examples below.
+These arrays being _global_, they can be consulted after the execution of the *JuDyn*  module as showh in the examples below.
 
 > Examples
 

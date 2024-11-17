@@ -49,13 +49,17 @@ function static_constrained_solve(JSON_file::String,uniform_rotation::Bool)
 
 
 
-    T = dict["Time_Integrator"]["parameters"]["T"]
+    periods = dict["Time_Integrator"]["parameters"]["T"]
+    typeof(periods) == Float64 && (periods = [periods])
+    Nsteps = dict["Time_Integrator"]["parameters"]["Npas"]
+    typeof(Nsteps) == Int  && (Nsteps = [Nsteps])
+    Times, time_steps =  variable_time_step(periods,Nsteps)
+    Npas = sum(Nsteps) + 1
     k = dict["Time_Integrator"]["parameters"]["k"]
     PREC = dict["Time_Integrator"]["parameters"]["PREC"]
     rho_inf = dict["Time_Integrator"]["parameters"]["rho_inf"]
     haskey(dict["Time_Integrator"]["parameters"],"PREC_OPT") == true ? (PREC_OPT = dict["Time_Integrator"]["parameters"]["PREC_OPT"]) : PREC_OPT = 1.0e-12
     NitMax = dict["Time_Integrator"]["parameters"]["NitMax"]
-    Npas = dict["Time_Integrator"]["parameters"]["Npas"]
     verbose = dict["Time_Integrator"]["parameters"]["verbose"]
     haskey(dict["Time_Integrator"]["parameters"],"verbose_constraints") == true ? (verbose_constraints = dict["Time_Integrator"]["parameters"]["verbose_constraints"]) : verbose_constraints = false
 
@@ -80,12 +84,12 @@ function static_constrained_solve(JSON_file::String,uniform_rotation::Bool)
     #
 
 
-    h = T/(Npas-1)
+    h = time_steps[1]
 
     delta_m=0.5*(3.0*rho_inf-1.0)/(rho_inf+1.0)
     delta_f=rho_inf/(rho_inf+1.0)
     theta=0.5 + delta_f- delta_m
-    global theta_p=(1.0-delta_m)/(h*theta*(1.0-delta_f))
+    theta_p=(1.0-delta_m)/(h*theta*(1.0-delta_f))
 
 
    
@@ -233,7 +237,7 @@ function static_constrained_solve(JSON_file::String,uniform_rotation::Bool)
         file, dsets = create_h5_file_static(h5_file,Npas,eigvals,eig_freq,max_vals)
     
         vals = zeros(max_vals)
-        times = (itime -1)*h
+        times = Times[itime]
         niter = 0
 
         record_on_h5_file_static(dsets,itime,itime_vals_saved,times,niter,y_n,ydot_n,p,
@@ -266,7 +270,10 @@ function static_constrained_solve(JSON_file::String,uniform_rotation::Bool)
 
     for itime = 2:Npas
 
-        times = (itime-1)*h
+        times = Times[itime]
+        h = time_steps[itime-1]
+        theta_p=(1.0-delta_m)/(h*theta*(1.0-delta_f))
+
 
         ydot_np1[iloc_int] .= 0.0
 
@@ -317,7 +324,7 @@ function static_constrained_solve(JSON_file::String,uniform_rotation::Bool)
             end
 
             if Nbounds > 0 
-                B, x_n, bounds  = element_constraints(Ndofs,Nel,Nbounds,bounds,y_n, Dy,itime,h)
+                B, x_n, bounds  = element_constraints(Ndofs,Nel,Nbounds,bounds,y_n, Dy,times)
             end   
 
     

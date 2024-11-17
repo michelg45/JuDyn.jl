@@ -47,22 +47,38 @@ function beam(nbr::Int,y::Vector{Float64},Dy::Vector{Float64},ydot::Vector{Float
 
     visco_type = bc.visco_type[iel]
 
+    stress = bc.stresses[iel]
+    strains = bc.strains[iel]
+    K_el = copy(K)
+ 
     if visco_type == "maxwell"
     
         time_constants = bc.time_constants[iel]
         ratio_infty = bc.ratio_infty[iel]
-        K_b = (1.0 - ratio_infty)*K
+        visco_strains = bc.visco_strains[iel]
 
-        if itime > 1
-            Gamma_2 = broadcast(x -> h/x/2.0*exp(-h/2.0/x), time_constants)
-            Gamma_1 = broadcast(x -> exp(-h/x), time_constants)
-        else
-            Gamma_1 = zeros(6)
-            Gamma_2 = zeros(6)
+        
+
+        n_branches = size(time_constants,1)
+        Gamma_1 = Vector{Vector{Float64}}(undef,n_branches)
+        Gamma_2 = Vector{Vector{Float64}}(undef,n_branches)
+        K_b = Vector{Vector{Float64}}(undef,n_branches)
+
+        for i = 1:n_branches
+            K_b[i] = (1.0 - ratio_infty[i])*K
+            tau_m = sum(time_constants[i])/6
+            if (tau_m/h > 1)
+                Gamma_2[i] = broadcast(x -> h/x/2.0*exp(-h/2.0/x), time_constants[i])
+                Gamma_1[i] = broadcast(x -> exp(-h/x), time_constants[i])
+            else
+                Gamma_2[i] = 0.5*ones(6)
+                Gamma_1[i] = zeros(6)
+            end
+            niter == 1 && (visco_strains[i][:,1] = visco_strains[i][:,2])
+            K_el -=  Gamma_2[i].*K_b[i]
         end
-
-        niter == 1 && (bc.strains[iel][:,1] = bc.strains[iel][:,2];
-        bc.visco_strains[iel][:,1] = bc.visco_strains[iel][:,2])
+        
+        niter == 1 && (strains[:,1] = strains[:,2])
 
 end
 
@@ -157,26 +173,20 @@ end
 
     e1 = zeros(3)
     e1[1] = 1.0
-    strain = [1/Length*(transpose(invT)*u).v - e1; 1.0/Length*phi.v]
+    strains[:,2] = [1/Length*(transpose(invT)*u).v - e1; 1.0/Length*phi.v]
+    stress = K .* strains[:,2]
 
     if visco_type == "maxwell"
-        alpha = Gamma_1 .* bc.visco_strains[iel][:,1] + Gamma_2 .* (strain + bc.strains[iel][:,1]) 
-        stress =  K .* strain - K_b .* alpha
-        bc.visco_strains[iel][:,2] = alpha
-    else
-        stress = K .* strain
+
+        for i = 1:n_branches
+            visco_strains[i][:,2] = Gamma_1[i] .* visco_strains[i][:,1] + Gamma_2[i] .* (strains[:,2] + strains[:,1]) 
+            stress -=  K_b[i] .* visco_strains[i][:,2]
+        end
+
     end
 
-    bc.stresses[iel][:] = stress
-    bc.strains[iel][:,2] = strain
-
-    """DstrDp =    [-invTRT  A1.mat  invTRT  A2.mat; Z33 -1.0/Length*(tinvTR).mat Z33 1.0/Length*(invT*R_rel[2]).mat]
-    DstrDq =    [-invTRT  (A1*T_1).mat  invTRT  (A2*T_2).mat; Z33 -1.0/Length*(tinvTR*T_1).mat Z33 1.0/Length*(invT*R_rel[2]*T_2).mat]
-"""
     DstrDp =    [-invTRT  A1.mat  invTRT  A2.mat; Z33 -1.0/Length*(tinvTR).mat Z33 1.0/Length*(invT*transpose(R_rel[2])).mat]
     DstrDq =    [-invTRT  (A1*T_1).mat  invTRT  (A2*T_2).mat; Z33 -1.0/Length*(tinvTR*T_1).mat Z33 1.0/Length*(invT*transpose(R_rel[2])*T_2).mat]
-
-
 
 
     tW = [tilde(W_1).mat Z33; Z33 tilde(W_2).mat]
@@ -184,9 +194,7 @@ end
 
     res_el[idepl] = - Length*transpose(DstrDp)*stress
 
-
-
-    S_el[idepl,idepl] = alpha_stiff*Length*transpose(DstrDp)*diagm(K)*DstrDq 
+    S_el[idepl,idepl] = alpha_stiff*Length*transpose(DstrDp)*diagm(K_el)*DstrDq 
     
     if visco_type == "damped"
         damping_properties = bc.time_constants[iel] .* K
@@ -234,7 +242,7 @@ end
 
  
 
-    str_el = 0.5*Length*transpose(strain)*stress
+    str_el = 0.5*Length*transpose(strains[:,2])*stress
     kin_el = 0.5*(transpose(v)*mass_tr*v +  transpose(Omega)*mass_rot*Omega)
 
     if matrix == false
@@ -301,24 +309,36 @@ function beam_force(nbr::Int,y::Vector{Float64},Dy::Vector{Float64},ydot::Vector
     mass_properties = bc.mass_properties[iel]
     mass = mass_properties[1]*Length
 
+    stress = bc.stresses[iel]
+    strains = bc.strains[iel]
+
     if visco_type == "maxwell"
     
         time_constants = bc.time_constants[iel]
         ratio_infty = bc.ratio_infty[iel]
-        K_b = (1.0 - ratio_infty)*K
+        visco_strains = bc.visco_strains[iel]
 
-        if itime > 1
-            Gamma_2 = broadcast(x -> h/x/2.0*exp(-h/2.0/x), time_constants)
-            Gamma_1 = broadcast(x -> exp(-h/x), time_constants)
-        else
-            Gamma_1 = zeros(6)
-            Gamma_2 = zeros(6)
+        
+
+        n_branches = size(time_constants,1)
+        Gamma_1 = Vector{Vector{Float64}}(undef,n_branches)
+        Gamma_2 = Vector{Vector{Float64}}(undef,n_branches)
+        K_b = Vector{Vector{Float64}}(undef,n_branches)
+
+        for i = 1:n_branches
+            K_b[i] = (1.0 - ratio_infty[i])*K
+            tau_m = sum(time_constants[i])/6
+            if (tau_m/h > 1)
+                Gamma_2[i] = broadcast(x -> h/x/2.0*exp(-h/2.0/x), time_constants[i])
+                Gamma_1[i] = broadcast(x -> exp(-h/x), time_constants[i])
+            else
+                Gamma_2[i] = 0.5*ones(6)
+                Gamma_1[i] = zeros(6)
+            end
+            niter == 1 && (visco_strains[i][:,1] = visco_strains[i][:,2])
         end
-
-        niter == 1 && (bc.strains[iel][:,1] = bc.strains[iel][:,2];
-        bc.visco_strains[iel][:,1] = bc.visco_strains[iel][:,2])
-
-end
+        niter == 1 && (strains[:,1] = strains[:,2])
+    end
 
     iner_rot = Length*diagm(mass_properties[2:4])
     iner_tr = mass*eye(3)
@@ -397,18 +417,18 @@ end
 
     e1 = zeros(3)
     e1[1] = 1.0
-    strain = [1/Length*(transpose(invT)*u).v - e1; 1.0/Length*phi.v]
+    strains[:,2] = [1/Length*(transpose(invT)*u).v - e1; 1.0/Length*phi.v]
+    stress = K .* strains[:,2]
 
     if visco_type == "maxwell"
-        alpha = Gamma_1 .* bc.visco_strains[iel][:,1] + Gamma_2 .* (strain + bc.strains[iel][:,1]) 
-        stress =  K .* strain - K_b .* alpha
-        bc.visco_strains[iel][:,2] = alpha
-    else
-        stress = K .* strain
+
+        for i = 1:n_branches
+            visco_strains[i][:,2] = Gamma_1[i] .* visco_strains[i][:,1] + Gamma_2[i] .* (strains[:,2] + strains[:,1]) 
+            stress -=  K_b[i] .* visco_strains[i][:,2]
+        end
+
     end
 
-    bc.stresses[iel][:] = stress
-    bc.strains[iel][:,2] = strain
 
     DstrDp =    [-invTRT  A1.mat  invTRT  A2.mat; Z33 -1.0/Length*(tinvTR).mat Z33 1.0/Length*(invT*R_rel[2]).mat]
     
@@ -448,7 +468,7 @@ end
     res_el[itheta] -= f_iner_rot
     res_el[ix] +=   p_el - f_iner_tr
 
-    str_el = 0.5*Length*transpose(strain)*stress
+    str_el = 0.5*Length*transpose(strains[:,2])*stress
     kin_el = 0.5*(transpose(v)*mass_tr*v +  transpose(Omega)*mass_rot*Omega)
 
     pot_el = p_el'*[x_1.v; x_2.v]

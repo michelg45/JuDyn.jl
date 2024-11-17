@@ -36,9 +36,9 @@ function set_shell(nbr::Int,connected_nodes::Vector{Int}, thickness::Float64, st
     mass_properties::Vector{Float64},ngauss_points::Int)
     
     visco_type = "none"
-    ratio_infty = 1.0
-    tau_B = 0.0
-    tau_S = 0.0
+    ratio_infty = [1.0]
+    tau_B = [0.0]
+    tau_S = [0.0]
 
     set_shell(nbr,connected_nodes, thickness, stiffness_properties,
     mass_properties,ngauss_points,tau_B,tau_S, ratio_infty, visco_type)
@@ -47,10 +47,10 @@ function set_shell(nbr::Int,connected_nodes::Vector{Int}, thickness::Float64, st
 end
 
 function set_shell(nbr::Int,connected_nodes::Vector{Int}, thickness::Float64, stiffness_properties::Vector{Float64},
-    mass_properties::Vector{Float64},ngauss_points::Int,tau_B::Float64,tau_S::Float64)
+    mass_properties::Vector{Float64},ngauss_points::Int,tau_B::Vector{Float64},tau_S::Vector{Float64})
     
     visco_type = "damped"
-    ratio_infty = 1.0
+    ratio_infty = [1.0]
 
     set_shell(nbr,connected_nodes, thickness, stiffness_properties,
     mass_properties,ngauss_points,tau_B,tau_S, ratio_infty, visco_type)
@@ -60,13 +60,13 @@ end
 
 function set_shell(nbr::Int,connected_nodes::Vector{Int}, thickness::Float64, stiffness_properties::Vector{Float64},
     mass_properties::Vector{Float64},ngauss_points::Int,
-    tau_B::Float64,tau_S::Float64, ratio_infty::Float64, visco_type::String)
+    tau_B::Vector{Float64},tau_S::Vector{Float64}, ratio_infty::Vector{Float64}, visco_type::String)
 
 global Nnodes = size(connected_nodes, 1)
 
 ndim = Nnodes*6
 ng = 1
-visco_type == "maxwell" &&  (ng = ngauss_points) 
+visco_type == "maxwell" &&  (ng = ngauss_points; n_branches = size(tau_B,1)) 
 
 global H_init = Vector{NodeFrame}(undef,Nnodes)
 global R_rel = Vector{RV3}(undef,Nnodes)
@@ -78,10 +78,8 @@ global n_0g = Vector{Vec3}(undef,ngauss_points)
 global K_0g = Vector{Matrix}(undef,ngauss_points)
 global M_NN = zeros(ndim,ndim)
 global strains_g = Vector{Matrix}(undef,ng)
-global visco_strains_g = Vector{Matrix}(undef,ng)
 if visco_type == "maxwell"
     for i = 1:ngauss_points
-        visco_strains_g[i] = zeros(12,2)
         strains_g[i] = zeros(12,2)
     end
 end
@@ -110,19 +108,29 @@ end
     if visco_type != "none" 
         
         nu = stiffness_properties[2]
-        tau_shear = tau_S
-        tau_ext = 1.0/3.0*((1-2.0*nu)*tau_B + 2.0*(1.0+nu)*tau_S)
-        time_constants[1] = tau_ext
-        time_constants[2:4] .= tau_shear
-        time_constants[5] = tau_ext
-        time_constants[6] = 10000.0
-        time_constants[7] = tau_shear
-        time_constants[8] = tau_ext
-        time_constants[9] = tau_shear
-        time_constants[10] = tau_ext
-        time_constants[11] = tau_shear
-        time_constants[12] = 10000.0
-         
+
+        n_branches = size(tau_B,1)
+        
+        time_constants = Vector{Any}(undef,n_branches)
+
+
+        tau_E = 1.0/3.0*((1-2.0*nu)*tau_B + 2.0*(1.0+nu)*tau_S)
+        z = zeros(12,2)
+        global visco_strains_g = triple_array(ng,n_branches,z)
+        for nb = 1:n_branches
+            time_constants[nb] = zeros(12)
+            time_constants[nb][1] = tau_E[nb]
+            time_constants[nb][2:4] .= tau_S[nb]
+            time_constants[nb][5] = tau_E[nb]
+            time_constants[nb][6] = 10000.0
+            time_constants[nb][7] = tau_S[nb]
+            time_constants[nb][8] = tau_E[nb]
+            time_constants[nb][9] = tau_S[nb]
+            time_constants[nb][10] = tau_E[nb]
+            time_constants[nb][11] = tau_S[nb]
+            time_constants[nb][12] = 10000.0
+        end 
+    else visco_strains_g = [0.0]
     end
 
     size(stiffness_properties,1) != 2 && error("element ", nbr, " wrong dimension of stiffness properties")
