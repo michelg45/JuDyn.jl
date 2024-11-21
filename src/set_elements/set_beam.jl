@@ -53,9 +53,9 @@ function set_beam(nbr::Int,nodes::Vector{Int},ref_orientation::RV3,stiffness_pro
     mass_properties::Vector{Float64},constant_inertia::Bool)
 
     visco_type = "none"
-    ratio_infty = 1.0
-    tau_E = 0.0
-    tau_S = 0.0
+    ratio_infty = [1.0]
+    tau_E = [0.0]
+    tau_S = [0.0]
 
     set_beam(nbr,nodes,ref_orientation,stiffness_properties,
     mass_properties,constant_inertia,tau_E,tau_S, ratio_infty, visco_type)
@@ -84,8 +84,7 @@ function set_beam(nbr::Int,nodes::Vector{Int},stiffness_properties::Vector{Float
     x_2=copy(nc.init_positions[nodes[2]])
 
     ref_orientation = frame_on_line(x_1,x_2)
-    println(ref_orientation)
-
+    
     constant_inertia = false
 
     set_beam(nbr,nodes,ref_orientation,stiffness_properties,mass_properties,constant_inertia)
@@ -130,7 +129,10 @@ function set_beam(nbr::Int,nodes::Vector{Int},ref_orientation::RV3,stiffness_pro
             time_constants[nb][1] = tau_E[nb]
             time_constants[nb][5:6] .= tau_E[nb]
             time_constants[nb][2:4] .= tau_S[nb]
-        end 
+        end
+    else 
+        time_constants = []
+        visco_strains = []
          
     end
 

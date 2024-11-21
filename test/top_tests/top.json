@@ -1,0 +1,32 @@
+{
+  "Time_Integrator": {
+    "parameters": {
+          "PREC": 1.0e-6,
+          "NitMax": 10,
+          "rho_inf": 0.95,
+          "Npas": 5001,
+          "T": 10.0,
+          "k": 1.0,
+          "elimv": true,
+          "verbose": false}
+    },
+    "Input": {
+   "external_force": "null_force"
+},
+"Eigenvalue_Analysis": {
+  "eigvals": false,
+  "eig_freq": 100,
+  "max_vals": 6
+},
+  "Output": {
+    "name": "top",
+    "parameters": {
+      "compression_enabled": false,
+      "overwrite_existing_file": true,
+      "save_freq": 10,
+      "save_h5": true,
+      "save_mat": false,
+      "energy_balance": false
+    }
+  }
+}

@@ -41,11 +41,16 @@ function static_solve(JSON_file::String,uniform_rotation::Bool)
 
 
 
-    T = dict["Time_Integrator"]["parameters"]["T"]
+    periods = dict["Time_Integrator"]["parameters"]["T"]
+    typeof(periods) == Float64 && (periods = [periods])
+    Nsteps = dict["Time_Integrator"]["parameters"]["Npas"]
+    typeof(Nsteps) == Int  && (Nsteps = [Nsteps])
+    Times, time_steps =  variable_time_step(periods,Nsteps)
+    Npas = sum(Nsteps) + 1
     k = dict["Time_Integrator"]["parameters"]["k"]
     PREC = dict["Time_Integrator"]["parameters"]["PREC"]
     NitMax = dict["Time_Integrator"]["parameters"]["NitMax"]
-    Npas = dict["Time_Integrator"]["parameters"]["Npas"]
+    typeof(Npas) == Vector{Int} && (Npas = Npas[1])
     verbose = dict["Time_Integrator"]["parameters"]["verbose"]
 
     is_eigvals = haskey(dict,"Eigenvalue_Analysis")
@@ -70,7 +75,7 @@ function static_solve(JSON_file::String,uniform_rotation::Bool)
     #
 
 
-    h = T/(Npas-1)
+    h = time_steps[1]
 
 
     theta_p= 0.0
@@ -171,7 +176,7 @@ global F = lu(sparse(I_qq,J_qq,rand(nz_qq)))
     global itime_vals_saved = 1
 
     itime = 1
-
+   
     global ext_work = 0.0
 
     niter = 1
@@ -187,6 +192,7 @@ global F = lu(sparse(I_qq,J_qq,rand(nz_qq)))
         
 
         itime = 1
+        h = time_steps[1]
 
         vals = zeros(max_vals)
         times = (itime -1)*h
@@ -222,7 +228,8 @@ global F = lu(sparse(I_qq,J_qq,rand(nz_qq)))
 
     for itime = 2:Npas
 
-        times = (itime-1)*h
+        times = Times[itime]
+        h = time_steps[itime-1]
 
 
         Dy .= 0.

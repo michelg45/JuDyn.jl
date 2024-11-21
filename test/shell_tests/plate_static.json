@@ -1,0 +1,30 @@
+{
+  "Time_Integrator": {
+    "parameters": {
+          "PREC": 1.0e-4,
+          "NitMax": 20,
+          "Npas": [5,10],
+          "T": [0.5, 0.5],
+          "k": 1.0,
+          "rho_inf" : 0.0,
+          "verbose": true,
+          "PREC_OPT": 1.0e-10,
+          "verbose_constraints": false
+        }
+    },
+    "Eigenvalue_Analysis": {
+      "eigvals": false,
+      "eig_freq": 2,
+      "max_vals": 14
+    },
+  "Output": {
+    "name": "test_flat_plate",
+    "parameters": {
+      "compression_enabled": false,
+      "overwrite_existing_file": true,
+      "save_h5": true,
+      "save_mat": false,
+      "energy_balance": false
+    }
+  }
+}

@@ -1,5 +1,5 @@
 function test_beam_static()
-        model_container, node_container, element_container = create_model()
+
         println(" ")
         println("nonlinear beam under static load with NL beams")
         nbr_elements =  40
@@ -59,7 +59,7 @@ function test_beam_static()
         #
         # static solution
         #
-        JSON_file2 = "NL_beam_tests/test_beam_static.json"
+        JSON_file2 = "./test/NL_beam_tests/test_beam_static.json"
         h5_file = solve(JSON_file2,sol_type)
         #
         # results selection
@@ -74,11 +74,7 @@ function test_beam_static()
         println("node ", nodes[2], " component u_Z ", y[Npas, ipos[2][3]])
         println("node ", nodes[2], " component phi_Y ", y[Npas, irot[2][2]])
 
-        global model_container = nothing
-        global node_container = nothing
-        global element_container = nothing
-        global SetElements.beam_container = nothing
-        rm("test_NL_beam.h5")
+        rm(h5_file)
 
         return y[Npas, ipos[2][1:3]]
     end

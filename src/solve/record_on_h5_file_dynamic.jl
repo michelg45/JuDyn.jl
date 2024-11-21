@@ -4,7 +4,7 @@
 function record_on_h5_file_dynamic(dsets::Vector{Any},itime::Int,itime_saved::Int,itime_vals_saved::Int,times::Float64,
     niter::Int,y_n::Vector{Float64},ydot::Vector{Float64},
     p::Vector{Float64},pot_energy::Float64,kin_energy::Float64,
-    str_energy::Float64,ext_work::Float64,Npas::Int,save::Bool,save_freq::Int,
+    str_energy::Float64,sum_ext_work::Float64,Npas::Int,save::Bool,save_freq::Int,
     eigvals::Bool,eig_freq::Int,vals::Vector)
 
     mc = Main.model_container
@@ -29,7 +29,8 @@ function record_on_h5_file_dynamic(dsets::Vector{Any},itime::Int,itime_saved::In
         dsets[6][itime_saved,1] = kin_energy
         dsets[7][itime_saved,1] = pot_energy
         dsets[8][itime_saved,1] = str_energy
-        dsets[9][itime_saved,1] = ext_work
+        dsets[9][itime_saved,1] = sum_ext_work
+        
 
         for i = 1:Nnodes
             dsets[13][itime_saved,1:3,i] = (Main.Frames.current_frames[i].x).v
